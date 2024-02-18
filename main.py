@@ -5,7 +5,7 @@ from homAnisoPage import HomoAnisoPage
 from inhomIsoPage import InhomoIsoPage
 from inhomoAniso import InhomoAnisoPage
 
-class SampleApp(tk.Tk):
+class EshelbySolApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         
@@ -25,5 +25,5 @@ class SampleApp(tk.Tk):
         frame.tkraise()
 
 if __name__ == "__main__":
-    app = SampleApp()
+    app = EshelbySolApp()
     app.mainloop()
