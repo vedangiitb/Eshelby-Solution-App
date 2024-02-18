@@ -30,9 +30,6 @@ class InputPagesParent:
         else:
             pass
             # TODO: Throw an error
-        
-        # TODO: Check if all epij are not none
-        # If the function returns false, it throws an error
 
         self.ep11 = ep11
         self.ep22 = ep22
@@ -41,11 +38,9 @@ class InputPagesParent:
         self.ep13 = ep13
         self.ep23 = ep23
 
+        # TODO: Check if all epij are not none
+        # If the function returns false, it throws an error
+
         # We return True once we have confirmed that all values are OK and we have initialized all the functions 
         return True
     
-
-
-
-
-
