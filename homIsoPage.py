@@ -28,6 +28,8 @@ class HomoIsoPage(tk.Frame):
 
         else:
             # Replace this with actual answer compute karne wala function 
+            output_label = tk.Label(self, text="All values OK!")
+            output_label.pack()
             self.computeAns()
 
     def takeInputParams(self):
