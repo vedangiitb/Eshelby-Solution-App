@@ -75,9 +75,6 @@ class HomoIsoPage(tk.Frame):
             'a1': self.a1.get(),
             'a2': self.a2.get(),
             'a3': self.a3.get(),
-            'E': self.E.get(),
-            'nu': self.nu.get(),
-            'mu': self.mu.get(),
             'ep11': self.ep11.get(),
             'ep22': self.ep22.get(),
             'ep33': self.ep33.get(),
@@ -85,10 +82,23 @@ class HomoIsoPage(tk.Frame):
             'ep13': self.ep13.get(),
             'ep23': self.ep23.get()
         }
+
         
         for field, entry in entries.items():
             if not entry:
                 return (False,field)
+        
+        noneCount = 0
+
+        if self.E.get()==None:
+            noneCount+=1
+        if self.nu.get()==None:
+            noneCount+=1
+        if self.mu.get()==None:
+            noneCount+=1
+        
+        if noneCount<2:
+            return (False, "atleast 2 modulus quantities")
             
         return (True,None)
 
