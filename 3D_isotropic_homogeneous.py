@@ -266,7 +266,7 @@ for i in range(3):
     for j in range(3):
         for k in range(3):
             for l in range(3):
-                epsilon[i][j] += Dijkl[i,j,k,l] * epsilon_star[k,l]
+                epsilon[i][j] += Dijkl[i,j,k,l] * epsilon_star[k][l]
 
 
 sigma = np.zeros((3,3))
