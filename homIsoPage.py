@@ -1,4 +1,5 @@
 import tkinter as tk
+from homoisoresult import HomoIsoResult
 
 class HomoIsoPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -10,18 +11,20 @@ class HomoIsoPage(tk.Frame):
         from welcomePage import WelcomePage
         
         button1 = tk.Button(self, text="Back",
-                            command=lambda: controller.show_frame(WelcomePage))
+                            command=lambda: controller.show_frame(WelcomePage),)
         button1.pack()
 
         self.takeInputParams()
 
         # Button to process user input
-        run_button = tk.Button(self, text="Process", command=self.process_input)
+        # run_button = tk.Button(self, text="Process", command=self.computeAns)
+        run_button = tk.Button(self, text="Process", command=lambda:controller.show_frame(HomoIsoResult) if self.process_input() else self.process_input())
         run_button.pack()
 
     def process_input(self):
         # Check if the input is valid or not
         val, label = self.checkInputParams()
+        
         if not val:
             output_label = tk.Label(self, text="No value entered for " + label)
             output_label.pack()
@@ -30,7 +33,8 @@ class HomoIsoPage(tk.Frame):
             # Replace this with actual answer compute karne wala function 
             output_label = tk.Label(self, text="All values OK!")
             output_label.pack()
-            self.computeAns()
+            self.computeAns(self.inputParams())
+            return True
 
     def takeInputParams(self):
         # Entry widget for user input
@@ -70,7 +74,7 @@ class HomoIsoPage(tk.Frame):
         self.ep23 = tk.Entry(self)
         self.ep23.pack(pady=10)
 
-    def checkInputParams(self):
+    def inputParams(self):
         entries = {
             'a1': self.a1.get(),
             'a2': self.a2.get(),
@@ -82,6 +86,12 @@ class HomoIsoPage(tk.Frame):
             'ep13': self.ep13.get(),
             'ep23': self.ep23.get()
         }
+
+        return entries
+
+    def checkInputParams(self):
+        
+        entries = self.inputParams()
 
         
         for field, entry in entries.items():
@@ -97,11 +107,34 @@ class HomoIsoPage(tk.Frame):
         if self.mu.get()==None:
             noneCount+=1
         
-        if noneCount<2:
+        if noneCount>0:
             return (False, "atleast 2 modulus quantities")
             
+        print(entries)
         return (True,None)
 
 
-    def computeAns(self):
-        return True
+    def computeAns(self,input_para):
+        a1 = input_para['a1']
+        a2 = input_para['a2']
+        a3 = input_para['a3']
+        ep11 = input_para['ep11']
+        ep22 = input_para['ep22']
+        ep33 = input_para['ep33']
+        ep12 = input_para['ep12']
+        ep13 = input_para['ep13']
+        ep23 = input_para['ep23']
+        E = self.E.get()
+        nu = self.nu.get()
+        mu = self.mu.get()
+
+        #Call the function from from solution codes here with above parameters
+        # convert the output numpy arrays into vtk format and use it to plot in ovito
+        pass
+            
+            
+        
+
+
+        
+       

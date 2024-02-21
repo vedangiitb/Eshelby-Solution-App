@@ -4,6 +4,7 @@ from homIsoPage import HomoIsoPage
 from homAnisoPage import HomoAnisoPage
 from inhomIsoPage import InhomoIsoPage
 from inhomoAniso import InhomoAnisoPage
+from homoisoresult import HomoIsoResult
 
 class EshelbySolApp(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -13,7 +14,7 @@ class EshelbySolApp(tk.Tk):
         container.pack(side="top", fill="both", expand=True)
         
         self.frames = {}
-        for F in (WelcomePage, HomoIsoPage,HomoAnisoPage,InhomoIsoPage,InhomoAnisoPage):
+        for F in (WelcomePage, HomoIsoPage,HomoAnisoPage,InhomoIsoPage,InhomoAnisoPage, HomoIsoResult):
             frame = F(container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
