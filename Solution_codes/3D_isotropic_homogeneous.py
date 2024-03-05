@@ -270,3 +270,9 @@ for i in range(3):
 
 
 sigma = np.zeros((3,3))
+epsilon_kk = epsilon[1][1] + epsilon[2][2] + epsilon[3][3]
+epsilon_star_kk = epsilon_star[1][1] + epsilon_star[2][2] + epsilon_star[3][3]
+lamda = 2*mu*nu/(1-2*nu)
+for i in range(3):
+    for j in range(3):
+        sigma[i][j] = 2*mu*(epsilon[i][j] - epsilon_star[i][j]) + lamda*(epsilon_kk - epsilon_star_kk)
