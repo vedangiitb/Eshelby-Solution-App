@@ -1,0 +1,23 @@
+.startpage{
+    padding: 1.5%;
+}
+
+.startpageelements{
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5%;
+    gap: 10px;
+}
+
+/* problemType */
+
+.typePage{
+    padding: 1.5%;
+}
+
+.typeelements{
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5%;
+    gap: 10px;
+}
