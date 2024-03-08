@@ -4,15 +4,20 @@ const path = require('path');
 const { spawn } = require('child_process');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
+const bodyParser = require('body-parser');
+const { appendFile } = require('fs');
 
 const appExpress = express();
 const port = 3000;
+
+//Body parser middleware
+appExpress.use(bodyParser.urlencoded({extended:true}));
 
 appExpress.engine('ejs',ejsMate);
 appExpress.set('view engine', 'ejs');
 appExpress.set('views', path.join(__dirname, 'views'));
 appExpress.use(express.static(path.join(__dirname,'public')))
-appExpress.use(express.urlencoded({extended:true}))
+// appExpress.use(express.urlencoded({extended:true}))
 appExpress.use(methodOverride('_method'));
 
 appExpress.get('/', (req, res) => {
@@ -49,15 +54,21 @@ appExpress.get('/learnsoftware',(req,res)=>{
 
 
 appExpress.post('/isohomoinput',(req,res)=>{
-  const { a, b, c,eps11,eps22,eps33,eps12,eps13,eps23,ep,nu,mu } = req.body;
+  // const { a, b, c,eps11,eps22,eps33,eps12,eps13,eps23,ep,nu,mu } = req.body;
+  const formData = req.body;
+  // console.log(formData);
+
+
 
   try{
-    const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_homogeneous.py', a,b,c,eps11,eps22,eps33,eps12,eps13,eps23,ep,nu,mu])
-    let output = " "
+    // const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_homogeneous.py', a,b,c,eps11,eps22,eps33,eps12,eps13,eps23,ep,nu,mu])
+    const pythonProcess = spawn('python',['./Solution_codes/dummy.py', JSON.stringify(formData)]);
+    let output = " ";
     pythonProcess.stdout.on('data', (chunk) => {
       output += chunk.toString();
-    console.log(output)
+    // console.log(output)
   });
+  
 
   pythonProcess.stderr.on('error', (error) => {
     console.error('Error from Python process:', error);

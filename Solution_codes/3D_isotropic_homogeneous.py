@@ -4,6 +4,7 @@ import sympy as sym
 import scipy.integrate as integrate
 pi = np.pi
 import sys
+import json
 
 # Function to find Lambda (the largest root)
 
@@ -138,109 +139,146 @@ def get_Dijkl(s, delta, x, a, IIj, IIJk, IIJkl, IIjk):
     return Dijkl
 
 
-# Taking Inputs
+
+# a = sys.argv[1]
+# a = int(a)
+# b = sys.argv[2]
+# b = int(b)
+# c = sys.argv[3]
+# c = int(c)
+# axis = [a, b, c]
+# eps11 = sys.argv[4]
+# eps11 = int(eps11)
+# eps22 = sys.argv[5]
+# eps22 = int(eps22)
+# eps33 = sys.argv[6]
+# eps33 = int(eps33)
+# eps12 = sys.argv[7]
+# eps12 = int(eps12)
+# eps23 = sys.argv[8]
+# eps23 = int(eps23)
+# eps31 = sys.argv[9]
+# eps31 = int(eps31)
+# E = sys.argv[10]  # Young's Modulus
+# E = int(E)
+# nu = sys.argv[11]  # Poisson's Ratio
+# nu = int(nu)
 
 
-a = sys.argv[1]
-a = int(a)
-b = sys.argv[2]
-b = int(b)
-c = sys.argv[3]
-c = int(c)
-axis = [a, b, c]
-eps11 = sys.argv[4]
-eps11 = int(eps11)
-eps22 = sys.argv[5]
-eps22 = int(eps22)
-eps33 = sys.argv[6]
-eps33 = int(eps33)
-eps12 = sys.argv[7]
-eps12 = int(eps12)
-eps23 = sys.argv[8]
-eps23 = int(eps23)
-eps31 = sys.argv[9]
-eps31 = int(eps31)
-E = sys.argv[10]  # Young's Modulus
-E = int(E)
-nu = sys.argv[11]  # Poisson's Ratio
-nu = int(nu)
-mu = E/(2*(1+nu))
+def solve_inside(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu):
 
-#Calculating theta and K
+    mu = E/(2*(1+nu))
 
-theta = np.arcsin(np.sqrt((a**2 - c**2)/a**2))
-k = np.sqrt((a**2 - b**2)/(a**2 - c**2))
+    #Calculating theta and K
 
-F = sp.ellipkinc(theta, k**2)
-E = sp.ellipeinc(theta, k**2)
-I1 = (4*pi*a*b*c)*(F - E) / ((a**2 - b**2)*np.sqrt(a**2 - c**2))
-I3 = (4*pi*a*b*c)*((b*np.sqrt(a**2-c**2))/(a*c) - E)
-I2 = 4*pi - I1 - I3
+    theta = np.arcsin(np.sqrt((a**2 - c**2)/a**2))
+    k = np.sqrt((a**2 - b**2)/(a**2 - c**2))
+
+    F = sp.ellipkinc(theta, k**2)
+    E = sp.ellipeinc(theta, k**2)
+    I1 = (4*pi*a*b*c)*(F - E) / ((a**2 - b**2)*np.sqrt(a**2 - c**2))
+    I3 = (4*pi*a*b*c)*((b*np.sqrt(a**2-c**2))/(a*c) - E)
+    I2 = 4*pi - I1 - I3
 
 
-#Solvig equations for I11 and I13
-I12 = (I2-I1)/(a**2-b**2)
-x, y = sym.symbols('x y')
-eq1 = sym.Eq(3*x+I12+y, 4*pi/(a**2))
-eq2 = sym.Eq(3*(a**2)*x+(b**2)*I12+(c**2)*y, 3*I1)
-ans = sym.solve([eq1, eq2], (x, y))
-I11 = ans[x]
-I13 = ans[y]
+    #Solvig equations for I11 and I13
+    I12 = (I2-I1)/(a**2-b**2)
+    x, y = sym.symbols('x y')
+    eq1 = sym.Eq(3*x+I12+y, 4*pi/(a**2))
+    eq2 = sym.Eq(3*(a**2)*x+(b**2)*I12+(c**2)*y, 3*I1)
+    ans = sym.solve([eq1, eq2], (x, y))
+    I11 = ans[x]
+    I13 = ans[y]
 
-#Solving equations for I21 and I22
-I23 = (I3-I2)/(b**2-c**2)
-x, y = sym.symbols('x y')
-eq1 = sym.Eq(3*x+I23+y, 4*pi/(b**2))
-eq2 = sym.Eq(3*(b**2)*x+(c**2)*I23+(a**2)*y, 3*I2)
-ans = sym.solve([eq1, eq2], (x, y))
-I21 = ans[y]
-I22 = ans[x]
+    #Solving equations for I21 and I22
+    I23 = (I3-I2)/(b**2-c**2)
+    x, y = sym.symbols('x y')
+    eq1 = sym.Eq(3*x+I23+y, 4*pi/(b**2))
+    eq2 = sym.Eq(3*(b**2)*x+(c**2)*I23+(a**2)*y, 3*I2)
+    ans = sym.solve([eq1, eq2], (x, y))
+    I21 = ans[y]
+    I22 = ans[x]
 
-#Solving equation for I33 and I32
-I31 = (I1-I3)/(c**2-a**2)
-x, y = sym.symbols('x y')
-eq1 = sym.Eq(3*x+I31+y, 4*pi/(c**2))
-eq2 = sym.Eq(3*(c**2)*x+(a**2)*I31+(b**2)*y, 3*I3)
-ans = sym.solve([eq1, eq2], (x, y))
-I32 = ans[y]
-I33 = ans[x]
-#Solving for sigma
+    #Solving equation for I33 and I32
+    I31 = (I1-I3)/(c**2-a**2)
+    x, y = sym.symbols('x y')
+    eq1 = sym.Eq(3*x+I31+y, 4*pi/(c**2))
+    eq2 = sym.Eq(3*(c**2)*x+(a**2)*I31+(b**2)*y, 3*I3)
+    ans = sym.solve([eq1, eq2], (x, y))
+    I32 = ans[y]
+    I33 = ans[x]
+    #Solving for sigma
 
-#t1 t2 t3 are terms of sigma11
-t1 = (((a**2)*(3*I11 - 3*nu*I11 + nu*I21 + nu*I31))/(8*pi*(1-nu)*(1-2*nu)) + ((I1 - (nu/(1-nu))*(I2+I3))/(8*pi)) - ((1-nu)/(1-2*nu)))*eps11
+    #t1 t2 t3 are terms of sigma11
+    t1 = (((a**2)*(3*I11 - 3*nu*I11 + nu*I21 + nu*I31))/(8*pi*(1-nu)*(1-2*nu)) + ((I1 - (nu/(1-nu))*(I2+I3))/(8*pi)) - ((1-nu)/(1-2*nu)))*eps11
 
-t2 = (((b**2)*(I12-I12*nu + 3*nu*I22 + nu*I32))/(8*pi*(1-nu)*(1-2*nu)) - (I1 - (nu/1-nu)*(I2-I3))/(8*pi) - (nu)/(1-2*nu))*eps22
+    t2 = (((b**2)*(I12-I12*nu + 3*nu*I22 + nu*I32))/(8*pi*(1-nu)*(1-2*nu)) - (I1 - (nu/1-nu)*(I2-I3))/(8*pi) - (nu)/(1-2*nu))*eps22
 
-t3 = (((c**2)*(I3 - nu*I3 + 3*nu*I33 + nu*I23))/(8*pi*(1-nu)*(1-2*nu)) - (I1 - (nu/1-nu)*(I3-I2))/(8*pi) - (nu)/(1-2*nu))*eps33
+    t3 = (((c**2)*(I3 - nu*I3 + 3*nu*I33 + nu*I23))/(8*pi*(1-nu)*(1-2*nu)) - (I1 - (nu/1-nu)*(I3-I2))/(8*pi) - (nu)/(1-2*nu))*eps33
 
-sigma11 = 2*mu*(t1+t2+t3)
+    sigma11 = 2*mu*(t1+t2+t3)
 
-sigma12 = ((((a**2+b**2)*I12 + (1-2*nu)*(I1+I2))/(8*pi*(1-nu)))-1)*eps12*2*mu
-sigma23 = ((((b**2+c**2)*I12 + (1-2*nu)*(I2+I3))/(8*pi*(1-nu)))-1)*eps23*2*mu
-sigma31 = ((((a**2+c**2)*I12 + (1-2*nu)*(I1+I3))/(8*pi*(1-nu)))-1)*eps31*2*mu
-
-
-#q1 q2 q3 are for sigma22
+    sigma12 = ((((a**2+b**2)*I12 + (1-2*nu)*(I1+I2))/(8*pi*(1-nu)))-1)*eps12*2*mu
+    sigma23 = ((((b**2+c**2)*I12 + (1-2*nu)*(I2+I3))/(8*pi*(1-nu)))-1)*eps23*2*mu
+    sigma31 = ((((a**2+c**2)*I12 + (1-2*nu)*(I1+I3))/(8*pi*(1-nu)))-1)*eps31*2*mu
 
 
-q1 = (((b**2)*(3*I22 - 3*nu*I22 + nu*I32 + nu*I12))/(8*pi*(1-nu)*(1-2*nu)) + ((I2 - (nu/(1-nu))*(I1+I3))/(8*pi)) - ((1-nu)/(1-2*nu)))*eps22
-q2 = (((c**2)*(I23-I23*nu + 3*nu*I33 + nu*I13))/(8*pi*(1-nu)*(1-2*nu)) - (I2 - (nu/1-nu)*(I3-I1))/(8*pi) - (nu)/(1-2*nu))*eps33
-q3 = (((a**2)*(I21 - nu*I21 + 3*nu*I11 + nu*I31))/(8*pi*(1-nu)*(1-2*nu)) - (I2 - (nu/1-nu)*(I1-I3))/(8*pi) - (nu)/(1-2*nu))*eps11
-
-sigma22 = 2*mu*(q1+q2+q3)
+    #q1 q2 q3 are for sigma22
 
 
-#w1 w2 w3 are for sigma33
+    q1 = (((b**2)*(3*I22 - 3*nu*I22 + nu*I32 + nu*I12))/(8*pi*(1-nu)*(1-2*nu)) + ((I2 - (nu/(1-nu))*(I1+I3))/(8*pi)) - ((1-nu)/(1-2*nu)))*eps22
+    q2 = (((c**2)*(I23-I23*nu + 3*nu*I33 + nu*I13))/(8*pi*(1-nu)*(1-2*nu)) - (I2 - (nu/1-nu)*(I3-I1))/(8*pi) - (nu)/(1-2*nu))*eps33
+    q3 = (((a**2)*(I21 - nu*I21 + 3*nu*I11 + nu*I31))/(8*pi*(1-nu)*(1-2*nu)) - (I2 - (nu/1-nu)*(I1-I3))/(8*pi) - (nu)/(1-2*nu))*eps11
+
+    sigma22 = 2*mu*(q1+q2+q3)
 
 
-w1 = (((c**2)*(3*I33 - 3*nu*I33 + nu*I13 + nu*I23))/(8*pi*(1-nu)*(1-2*nu)) + ((I3 - (nu/(1-nu))*(I2+I1))/(8*pi)) - ((1-nu)/(1-2*nu)))*eps33
-w2 = (((a**2)*(I31-I31*nu + 3*nu*I11 + nu*I21))/(8*pi*(1-nu)*(1-2*nu)) - (I3 - (nu/1-nu)*(I1-I2))/(8*pi) - (nu)/(1-2*nu))*eps11
-w3 = (((b**2)*(I32 - nu*I32 + 3*nu*I22 + nu*I12))/(8*pi*(1-nu)*(1-2*nu)) - (I3 - (nu/1-nu)*(I2-I1))/(8*pi) - (nu)/(1-2*nu))*eps22
+    #w1 w2 w3 are for sigma33
 
-sigma33 = 2*mu*(w1+w2+w3)
+
+    w1 = (((c**2)*(3*I33 - 3*nu*I33 + nu*I13 + nu*I23))/(8*pi*(1-nu)*(1-2*nu)) + ((I3 - (nu/(1-nu))*(I2+I1))/(8*pi)) - ((1-nu)/(1-2*nu)))*eps33
+    w2 = (((a**2)*(I31-I31*nu + 3*nu*I11 + nu*I21))/(8*pi*(1-nu)*(1-2*nu)) - (I3 - (nu/1-nu)*(I1-I2))/(8*pi) - (nu)/(1-2*nu))*eps11
+    w3 = (((b**2)*(I32 - nu*I32 + 3*nu*I22 + nu*I12))/(8*pi*(1-nu)*(1-2*nu)) - (I3 - (nu/1-nu)*(I2-I1))/(8*pi) - (nu)/(1-2*nu))*eps22
+
+    sigma33 = 2*mu*(w1+w2+w3)
+
+    output_data = f"sigma11: {sigma11}, sigma22: {sigma22}, sigma33: {sigma33}, sigma12: {sigma12}, sigma13: {sigma31}, sigma23: {sigma23}"
+
+    return output_data
+
+try:
+    # Load the form data passed from Express.js
+    form_data = json.loads(sys.argv[1])
+
+    # Taking Inputs
+    a = float(form_data.get('a',''))
+    b = float(form_data.get('b',''))
+    c = float(form_data.get('c',''))
+    eps11 = float(form_data.get('eps11',''))
+    eps22 = float(form_data.get('eps22',''))
+    eps33 = float(form_data.get('eps33',''))
+    eps12 = float(form_data.get('eps12',''))
+    eps23 = float(form_data.get('eps23',''))
+    eps31 = float(form_data.get('eps13',''))
+    E = float(form_data.get('ep',''))
+    nu = float(form_data.get('nu',''))
+
+
+    axis = [a, b, c]
+
+    print(f"input data:{a,b,c,eps11,eps12,eps31,eps23,eps22,eps33,E,nu}")
+
+    output_data = solve_inside(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu)
+
+    print(output_data)
+
+except Exception as e:
+    print("error:", e)
 
 
 # CODE FOR OUTSIDE PART (MATRIX)
+
+mu = E/(2*(1+nu))
 
 epsilon_star = [[eps11, eps12, 0], [0, eps22, eps23], [eps31, 0, eps33]]
 
