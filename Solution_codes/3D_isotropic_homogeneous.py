@@ -3,6 +3,7 @@ import scipy.special as sp
 import sympy as sym
 import scipy.integrate as integrate
 pi = np.pi
+import sys
 
 # Function to find Lambda (the largest root)
 
@@ -140,19 +141,29 @@ def get_Dijkl(s, delta, x, a, IIj, IIJk, IIJkl, IIjk):
 # Taking Inputs
 
 
-a = float(input())
-b = float(input())
-c = float(input())
+a = sys.argv[1]
+a = int(a)
+b = sys.argv[2]
+b = int(b)
+c = sys.argv[3]
+c = int(c)
 axis = [a, b, c]
-eps11 = float(input())
-eps22 = float(input())
-eps33 = float(input())
-eps12 = float(input())
-eps23 = float(input())
-eps31 = float(input())
-
-E = float(input())  # Young's Modulus
-nu = float(input())  # Poisson's Ratio
+eps11 = sys.argv[4]
+eps11 = int(eps11)
+eps22 = sys.argv[5]
+eps22 = int(eps22)
+eps33 = sys.argv[6]
+eps33 = int(eps33)
+eps12 = sys.argv[7]
+eps12 = int(eps12)
+eps23 = sys.argv[8]
+eps23 = int(eps23)
+eps31 = sys.argv[9]
+eps31 = int(eps31)
+E = sys.argv[10]  # Young's Modulus
+E = int(E)
+nu = sys.argv[11]  # Poisson's Ratio
+nu = int(nu)
 mu = E/(2*(1+nu))
 
 #Calculating theta and K
@@ -276,3 +287,5 @@ lamda = 2*mu*nu/(1-2*nu)
 for i in range(3):
     for j in range(3):
         sigma[i][j] = 2*mu*(epsilon[i][j] - epsilon_star[i][j]) + lamda*(epsilon_kk - epsilon_star_kk)
+
+#print(sigma)

@@ -1,3 +1,80 @@
 <%- include('./inputTemplate') %>
 
-<p> HELLO </p>
+<h3>Isotropic Homogenous</h3>
+
+<div class="input-hom">
+    
+    <p>Add the material dimensions</p>
+    <form action="\isohomoinput"  method="POST">
+    <div class="input-abc">
+        <div class="input-group">
+            <span class="input-group-text" id="a">a</span>
+            <input class="form-control" type="text" id="a" name="a" required>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text" id="b">b</span>
+            <input class="form-control" type="text" id="b" name="b" required>
+        </div>
+        
+        <div class="input-group">
+            <span class="input-group-text" id="c">c</span>
+            <input class="form-control" type="text" id="c" name="c" required>
+        </div>
+    </div>
+
+    <p>Add the stress tensor</p>
+    <div class="input-eps">
+        <div class="input-group">
+            <span class="input-group-text" id="eps11">eps11</span>
+            <input type="text" class="form-control" id="eps11" name="eps11" aria-describedby="basic-addon3 basic-addon4" required>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text"  id="eps22">eps22</span>
+            <input type="text" class="form-control" id="eps22" name="eps22" aria-describedby="basic-addon3 basic-addon4" required>
+        </div>
+        
+        <div class="input-group">
+            <span class="input-group-text" id="eps33">eps33</span>
+            <input type="text" class="form-control" id="eps33" name="eps33" aria-describedby="basic-addon3 basic-addon4" required>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text" id="eps13">eps13</span>
+            <input type="text" class="form-control" id="eps13" name="eps13" aria-describedby="basic-addon3 basic-addon4" required>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text" id="eps23" >eps23</span>
+            <input type="text" class="form-control" id="eps23" name ="eps23" aria-describedby="basic-addon3 basic-addon4" required>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text" id="eps12" >eps12</span>
+            <input type="text" class="form-control" id="eps12" name="eps12" aria-describedby="basic-addon3 basic-addon4" required>
+        </div>
+    </div>
+    <p>Add the material constants</p>
+    <div class="input-EnuMu">
+        <div class="input-group">
+            <span class="input-group-text"  id="E">E</span>
+            <input type="text" class="form-control" id="E" name="ep" aria-describedby="basic-addon3 basic-addon4" required>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text" id="nu">nu</span>
+            <input type="text" class="form-control" id="nu" name="nu" aria-describedby="basic-addon3 basic-addon4" required>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text" id="mu">mu</span>
+            <input type="text" class="form-control" id="mu" name="mu" aria-describedby="basic-addon3 basic-addon4" required>
+        </div>
+
+    </div>
+
+    <button class="btn btn-success">Solve</button>
+
+</form>
+
+
+</div>
