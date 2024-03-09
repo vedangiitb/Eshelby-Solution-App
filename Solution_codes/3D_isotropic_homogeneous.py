@@ -277,16 +277,15 @@ except Exception as e:
 
 
 # CODE FOR OUTSIDE PART (MATRIX)
-
 mu = E/(2*(1+nu))
 
 epsilon_star = [[eps11, eps12, 0], [0, eps22, eps23], [eps31, 0, eps33]]
 
 X = [7, 7, 7]  # Exterior Point
 lbd = find_lambda(X, axis)
-# print("Lambda is: ", lbd)
+    # print("Lambda is: ", lbd)
 
-#Calculating I, I1, I2, I3, I11, I22, I33, etc
+    #Calculating I, I1, I2, I3, I11, I22, I33, etc
 I = IIJ(axis, lbd, 0, 0)
 Ii = [0, 0, 0]
 for i in range(3):
@@ -319,11 +318,11 @@ for i in range(3):
 
 
 sigma = np.zeros((3,3))
-epsilon_kk = epsilon[1][1] + epsilon[2][2] + epsilon[3][3]
-epsilon_star_kk = epsilon_star[1][1] + epsilon_star[2][2] + epsilon_star[3][3]
+epsilon_kk = epsilon[0][0] + epsilon[1][1] + epsilon[2][2]
+epsilon_star_kk = epsilon_star[0][0] + epsilon_star[1][1] + epsilon_star[2][2]
 lamda = 2*mu*nu/(1-2*nu)
 for i in range(3):
     for j in range(3):
         sigma[i][j] = 2*mu*(epsilon[i][j] - epsilon_star[i][j]) + lamda*(epsilon_kk - epsilon_star_kk)
 
-#print(sigma)
+print(sigma)
