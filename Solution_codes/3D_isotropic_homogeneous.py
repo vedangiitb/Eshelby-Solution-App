@@ -251,22 +251,22 @@ try:
     form_data = json.loads(sys.argv[1])
 
     # Taking Inputs
-    a = float(form_data.get('a',''))
-    b = float(form_data.get('b',''))
-    c = float(form_data.get('c',''))
-    eps11 = float(form_data.get('eps11',''))
-    eps22 = float(form_data.get('eps22',''))
-    eps33 = float(form_data.get('eps33',''))
-    eps12 = float(form_data.get('eps12',''))
-    eps23 = float(form_data.get('eps23',''))
-    eps31 = float(form_data.get('eps13',''))
-    E = float(form_data.get('ep',''))
-    nu = float(form_data.get('nu',''))
+    a = float(form_data.get('a'))
+    b = float(form_data.get('b'))
+    c = float(form_data.get('c'))
+    eps11 = float(form_data.get('eps11'))
+    eps22 = float(form_data.get('eps22'))
+    eps33 = float(form_data.get('eps33'))
+    eps12 = float(form_data.get('eps12'))
+    eps23 = float(form_data.get('eps23'))
+    eps31 = float(form_data.get('eps13'))
+    E = float(form_data.get('ep'))
+    nu = float(form_data.get('nu'))
 
 
     axis = [a, b, c]
 
-    print(f"input data:{a,b,c,eps11,eps12,eps31,eps23,eps22,eps33,E,nu}")
+    # print(f"input data:{a,b,c,eps11,eps12,eps31,eps23,eps22,eps33,E,nu}")
 
     output_data = solve_inside(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu)
 
@@ -284,7 +284,7 @@ epsilon_star = [[eps11, eps12, 0], [0, eps22, eps23], [eps31, 0, eps33]]
 
 X = [7, 7, 7]  # Exterior Point
 lbd = find_lambda(X, axis)
-print("Lambda is: ", lbd)
+# print("Lambda is: ", lbd)
 
 #Calculating I, I1, I2, I3, I11, I22, I33, etc
 I = IIJ(axis, lbd, 0, 0)
