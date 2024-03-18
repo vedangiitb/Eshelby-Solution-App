@@ -1,13 +1,13 @@
-import numpy as np
-import scipy.special as sp
-import sympy as sym
-import scipy.integrate as integrate
-pi = np.pi
-import sys
-import json
-
-# Function to find Lambda (the largest root)
-
+try:
+    import numpy as np
+    import scipy.special as sp
+    import sympy as sym
+    import scipy.integrate as integrate
+    pi = np.pi
+    import sys
+    import json
+except Exception as e:
+    print(e)
 
 def find_lambda(X, axis):
     ans = sym.symbols('ans')
@@ -138,33 +138,6 @@ def get_Dijkl(s, delta, x, a, IIj, IIJk, IIJkl, IIjk):
                     Dijkl[i, j, k, l] = (t1 + t2 + t3 + t4) / (8 * pi * (1 - nu))
     return Dijkl
 
-
-
-# a = sys.argv[1]
-# a = int(a)
-# b = sys.argv[2]
-# b = int(b)
-# c = sys.argv[3]
-# c = int(c)
-# axis = [a, b, c]
-# eps11 = sys.argv[4]
-# eps11 = int(eps11)
-# eps22 = sys.argv[5]
-# eps22 = int(eps22)
-# eps33 = sys.argv[6]
-# eps33 = int(eps33)
-# eps12 = sys.argv[7]
-# eps12 = int(eps12)
-# eps23 = sys.argv[8]
-# eps23 = int(eps23)
-# eps31 = sys.argv[9]
-# eps31 = int(eps31)
-# E = sys.argv[10]  # Young's Modulus
-# E = int(E)
-# nu = sys.argv[11]  # Poisson's Ratio
-# nu = int(nu)
-
-
 def solve_inside(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu):
 
     mu = E/(2*(1+nu))
@@ -269,60 +242,62 @@ try:
     # print(f"input data:{a,b,c,eps11,eps12,eps31,eps23,eps22,eps33,E,nu}")
 
     output_data = solve_inside(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu)
-
     print(output_data)
 
 except Exception as e:
     print("error:", e)
 
 
-# CODE FOR OUTSIDE PART (MATRIX)
-mu = E/(2*(1+nu))
+try:
+    # CODE FOR OUTSIDE PART (MATRIX)
+    mu = E/(2*(1+nu))
 
-epsilon_star = [[eps11, eps12, 0], [0, eps22, eps23], [eps31, 0, eps33]]
+    epsilon_star = [[eps11, eps12, 0], [0, eps22, eps23], [eps31, 0, eps33]]
 
-X = [7, 7, 7]  # Exterior Point
-lbd = find_lambda(X, axis)
-    # print("Lambda is: ", lbd)
+    X = [7, 7, 7]  # Exterior Point
+    lbd = find_lambda(X, axis)
+        # print("Lambda is: ", lbd)
 
-    #Calculating I, I1, I2, I3, I11, I22, I33, etc
-I = IIJ(axis, lbd, 0, 0)
-Ii = [0, 0, 0]
-for i in range(3):
-    Ii[i] = IIJ(axis, lbd, i, 0)
-Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-for i in range(3):
-    for j in range(3):
-        Iij[i][j] = IIJ(axis, lbd, i, j)
+        #Calculating I, I1, I2, I3, I11, I22, I33, etc
+    I = IIJ(axis, lbd, 0, 0)
+    Ii = [0, 0, 0]
+    for i in range(3):
+        Ii[i] = IIJ(axis, lbd, i, 0)
+    Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    for i in range(3):
+        for j in range(3):
+            Iij[i][j] = IIJ(axis, lbd, i, j)
 
-Sijkl = get_Sijkl(axis, I, Ii, Iij)
+    Sijkl = get_Sijkl(axis, I, Ii, Iij)
 
-lbd_der = lamb_der(X, axis, lbd)
-lbd_d_der = lamb_der2(X, axis, lbd, lbd_der)
+    lbd_der = lamb_der(X, axis, lbd)
+    lbd_d_der = lamb_der2(X, axis, lbd, lbd_der)
 
-IIj = Ii_j_(X, axis, lbd, lbd_der)
-IIJk = Iij_k_(X, axis, lbd, lbd_der)
-IIJkl = Iij_kl_(X, axis, lbd, lbd_der, lbd_d_der)
-IIjk = Ii_jk_(X, axis, lbd, lbd_der, lbd_d_der)
+    IIj = Ii_j_(X, axis, lbd, lbd_der)
+    IIJk = Iij_k_(X, axis, lbd, lbd_der)
+    IIJkl = Iij_kl_(X, axis, lbd, lbd_der, lbd_d_der)
+    IIjk = Ii_jk_(X, axis, lbd, lbd_der, lbd_d_der)
 
-deltaij = np.identity(3)
-Dijkl = get_Dijkl(Sijkl, deltaij, X, axis, IIj, IIJk, IIJkl, IIjk)
+    deltaij = np.identity(3)
+    Dijkl = get_Dijkl(Sijkl, deltaij, X, axis, IIj, IIJk, IIJkl, IIjk)
 
-epsilon = np.zeros((3, 3))
+    epsilon = np.zeros((3, 3))
 
-for i in range(3):
-    for j in range(3):
-        for k in range(3):
-            for l in range(3):
-                epsilon[i][j] += Dijkl[i,j,k,l] * epsilon_star[k][l]
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                for l in range(3):
+                    epsilon[i][j] += Dijkl[i,j,k,l] * epsilon_star[k][l]
 
 
-sigma = np.zeros((3,3))
-epsilon_kk = epsilon[0][0] + epsilon[1][1] + epsilon[2][2]
-epsilon_star_kk = epsilon_star[0][0] + epsilon_star[1][1] + epsilon_star[2][2]
-lamda = 2*mu*nu/(1-2*nu)
-for i in range(3):
-    for j in range(3):
-        sigma[i][j] = 2*mu*(epsilon[i][j] - epsilon_star[i][j]) + lamda*(epsilon_kk - epsilon_star_kk)
+    sigma = np.zeros((3,3))
+    epsilon_kk = epsilon[0][0] + epsilon[1][1] + epsilon[2][2]
+    epsilon_star_kk = epsilon_star[0][0] + epsilon_star[1][1] + epsilon_star[2][2]
+    lamda = 2*mu*nu/(1-2*nu)
+    for i in range(3):
+        for j in range(3):
+            sigma[i][j] = 2*mu*(epsilon[i][j] - epsilon_star[i][j]) + lamda*(epsilon_kk - epsilon_star_kk)
 
-print(sigma)
+    print(sigma)
+except Exception as e:
+    print("error:", e)

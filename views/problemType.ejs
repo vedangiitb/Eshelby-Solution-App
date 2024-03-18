@@ -1,21 +1,40 @@
-<%- include('./layouts/boilerplate') %>
+<%- layout('./layouts/boilerplate') %>
 
 <div class="typePage">
 <h3>Please Select the type of problem you want to Solve</h3>
 <div class="typeelements">
-    <a href="/isohomogen"><button type="button" class="btn btn-dark">Isotropic Homogenous</button></a>
+    <a href="/isohomogen" style="text-decoration: none;">
+        <div class="card col-8 typecard" style="padding: 6px;">
+            <p>Isotropic Homogenous</p>
+        </div>
+    </a>
 
-    <a href="/isohetergen"><button type="button" class="btn btn-dark">Isotropic Hetergenous</button></a>
-    
-    <a href="/anisohomogen"><button type="button" class="btn btn-dark">Anisotropic Homogenous</button></a>
-    
-    <a href="/anisoheterogen"><button type="button" class="btn btn-dark">Anisotropic Hetergenous</button></a>
+    <a href="/isohetergen" style="text-decoration: none;">
+        <div class="card col-8 typecard" style="padding: 6px;">
+            <p>Isotropic Hetergenous</p>
+        </div>
+    </a>
+
+    <a href="/anisohomogen" style="text-decoration: none;">
+        <div class="card col-8 typecard" style="padding: 6px;">
+            <p>Anisotropic Homogenous</p>
+        </div>
+    </a>
+
+    <a href="/anisoheterogen" style="text-decoration: none;">
+        <div class="card col-8 typecard" style="padding: 6px;">
+            <p>Anisotropic Hetergenous</p>
+        </div>
+    </a>
 </div>
 
+
+<div style="margin-top: 50px;">
 <h4>
     Not sure which one to use?
 </h4>
 <p>
     Dont worry, you can click <a href="/learnproblem">here</a> to learn more about problem types! 
 </p>
+</div>
 </div>

@@ -1,22 +1,40 @@
-<%- include('../layouts/boilerplate')%>
+<%- layout('./layouts/boilerplate') %>
 
 <div class="startpage">
 
     <h1>Eshelby's Solution</h1>
-    <p>Eshelby's solution stands as a cornerstone within the realm of continuum mechanics, particularly in the domain of elasticity. It tackles the intriguing challenge of analyzing stress and strain fields arising within an infinitely elastic body. The twist? This body harbors a special guest: an ellipsoidal inclusion.</p>
 
-    <h2>The Enigmatic Inclusion and Eigenstrain</h2>
-    <p>Imagine a vast, elastic body – like a giant block of rubber. Now, picture a tiny, oddly shaped region nestled within it. This curious entity is called the inclusion. The inclusion can be a bit of a rebel, possessing material properties distinct from its surroundings. It might be stiffer, proudly resisting deformation, or conversely, softer, readily yielding to pressure.</p>
-    <p>Eshelby's solution delves into how this inclusion's presence disrupts the peaceful state of the elastic body. It meticulously examines how the inclusion influences the internal stresses and strains (deformations) within the material. Here's where the concept of eigenstrain enters the scene. Eigenstrain signifies a pre-existing deformation "baked" into the inclusion, like a subtle twist or stretch.</p>
+    <p>
+        The Eshelby problem, named after John D. Eshelby, is a fundamental problem in the field of solid mechanics, specifically in the area of elasticity. It deals with the determination of the stress and strain fields inside an inclusion or defect (such as a void or an inclusion of a different material) embedded within an infinite elastic medium.
+    </p>
+    
+    <p>
+        The Eshelby problem is significant because it provides insights into how stresses and strains are distributed around inclusions or defects, which is crucial for understanding the mechanical behavior of composite materials, heterogeneous structures, and materials with defects.
+    </p>
 
-    <h2>The Brilliance of Eshelby's Method</h2>
-    <p>Eshelby's solution offers a masterful approach to analyzing this intricate scenario. It masterfully breaks down the complex problem into a series of manageable steps. Imagine a thought experiment where we can perform imaginary "surgery" on the material. We could virtually cut out the inclusion, subject it to a specific strain (think stretching or compressing), and then meticulously weld it back into place.</p>
-    <p>The beauty of Eshelby's method lies in its remarkable revelation: uniformity within the inclusion! Regardless of the material properties of the inclusion or the initial eigenstrain, the stress and strain fields throughout the inclusion are surprisingly uniform. They maintain the same consistent value across the entire inclusion.</p>
+    <p>
+        The problem typically involves finding the elastic fields (such as displacement, stress, and strain) caused by an inclusion or defect when the surrounding material is subjected to external loading conditions. These fields are often expressed in terms of Eshelby tensors, which describe how the inclusion affects the surrounding medium.
+    </p>
 
-    <h2>The Power and Applications of Uniformity</h2>
-    <p>This newfound uniformity within the inclusion is a powerful tool! It paves the way for deriving a closed-form solution for the stress and strain fields within the inclusion. This translates to a significant advantage: computationally efficient analysis of such materials.</p>
-    <p>Eshelby's solution becomes instrumental in comprehending the mechanics of composite materials. These materials are fascinating creations, meticulously crafted by combining multiple phases, often including inclusions. Eshelby's method allows us to predict the overall behavior of these intricate materials, providing valuable insights into their performance.</p>
-    <p>Furthermore, Eshelby's solution contributes significantly to the theory of effective medium. This theory simplifies the analysis of complex materials by treating them as a homogenous material with average properties. This simplification proves invaluable in various engineering applications.</p>
+    <p>
+        The problem is solved for 4 categories
+    </p>
 
-    <p>By delving into Eshelby's solution, we gain a deeper appreciation for the fascinating world of elasticity and the influence of inclusions on material behavior. This knowledge empowers engineers and scientists to design and analyze advanced materials with even greater precision.</p>
+    <ul>
+        <li>
+            <Strong>Isotropic Homogenous</Strong>: Uniform material properties in all directions simplify the Eshelby problem, allowing for analytical solutions for simple inclusion shapes.
+        </li>
+
+        <li>
+            <Strong>Isotropic Hetergenous</Strong>: Spatial variations in material properties complicate the Eshelby problem, often requiring numerical methods like FEA for accurate solutions.
+        </li>
+
+        <li>
+            <Strong>Anisotropic Homogenous</Strong>: Direction-dependent material properties add complexity, necessitating specialized mathematical formulations to solve the Eshelby problem
+        </li>
+
+        <li>
+            <Strong>Anisotropic Hetergenous</Strong>: Combining directional variations with spatial heterogeneity, this scenario is highly complex, often demanding advanced numerical simulations for accurate predictions in the Eshelby problem.
+        </li>
+    </ul>
 </div>
