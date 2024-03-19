@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain} = require('electron');
 const express = require('express');
 const path = require('path');
 const { spawn } = require('child_process');
@@ -51,11 +51,12 @@ appExpress.get('/learnsoftware',(req,res)=>{
   res.render('Tuts/softwareTut')
 })
 
+appExpress.get('/settings',(req,res)=>{
+  res.render('settings')
+})
 
 appExpress.post('/isohomoinput',(req,res)=>{
-  // const { a, b, c,eps11,eps22,eps33,eps12,eps13,eps23,ep,nu,mu } = req.body;
   const formData = req.body;
-  // console.log(formData);
 
   const pythonProcess = spawn('python',['./Solution_codes/dummy.py', JSON.stringify(formData)]);
   let output = '';
@@ -65,7 +66,6 @@ appExpress.post('/isohomoinput',(req,res)=>{
 
   pythonProcess.on('close', (code) => {
     console.log(`Python script exited with code ${code}`);
-    // Send the output back to the client
     console.log(output);
     res.render('result.ejs', { output });
   });
@@ -95,7 +95,8 @@ const server = appExpress.listen(port, () => {
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 800,
+    autoHideMenuBar: true,
+    width: 850,
     height: 600,
     webPreferences: {
       nodeIntegration: true
@@ -103,6 +104,12 @@ function createWindow() {
   });
 
   win.loadURL(`http://localhost:${port}`);
+
+  ipcMain.on('goBack', () => {
+    if (mainWindow && mainWindow.webContents.canGoBack()) {
+      mainWindow.webContents.goBack();
+    }
+  });
 }
 
 app.whenReady().then(createWindow);

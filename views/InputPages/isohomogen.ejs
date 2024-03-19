@@ -1,12 +1,12 @@
-<%- include('./inputTemplate') %>
+<%- layout('./InputPages/inputTemplate') %>
 
 <h3>Isotropic Homogenous</h3>
 
-<div class="input-hom">
+<div style="margin: 1.5%;">
     
     <p>Add the material dimensions</p>
     <form action="\isohomoinput"  method="POST">
-    <div class="input-abc">
+    <div class="input-hom">
         <div class="input-group">
             <span class="input-group-text" id="a">a</span>
             <input class="form-control" type="text" id="a" name="a" required>
@@ -24,7 +24,7 @@
     </div>
 
     <p>Add the stress tensor</p>
-    <div class="input-eps">
+    <div class="input-hom">
         <div class="input-group">
             <span class="input-group-text" id="eps11">eps11</span>
             <input type="text" class="form-control" id="eps11" name="eps11" aria-describedby="basic-addon3 basic-addon4" required>
@@ -56,7 +56,7 @@
         </div>
     </div>
     <p>Add the material constants</p>
-    <div class="input-EnuMu">
+    <div class="input-hom">
         <div class="input-group">
             <span class="input-group-text"  id="E">E</span>
             <input type="text" class="form-control" id="E" name="ep" aria-describedby="basic-addon3 basic-addon4" required>

@@ -1,6 +1,63 @@
-.startpage{
-    padding: 1.5%;
+body{
+    padding: 10px;
+    background-color: #003c69;
+    color: white;
+    font-family:Verdana, Geneva, Tahoma, sans-serif
 }
+
+.container{
+    padding-left: 250px;
+    padding-top: 35px;
+}
+
+.menucard{
+    color: white;
+    background-color: #002c50; 
+    margin-top: 2%;
+    height: 60px;
+    padding-left: 5%;
+    transition: filter 0.3s ease;
+}
+
+.menucard:hover{
+    filter: brightness(1.2);
+}
+
+.typecard{
+    color: white;
+    background-color: #002c50; 
+}
+
+.typecard:hover{
+    filter: brightness(1.2);
+}
+
+.navbar-header{
+    padding-bottom: 70px;
+}
+
+.navbar {
+    height: 100vh; /* Full height */
+    width: 250px; /* Set the width of the navbar */
+    background-color:#002c50 ; /* Navbar background color */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: fixed; /* Fixed position */
+    left: 0;
+    top: 0;
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+    padding-top: 20px;
+    transition: transform 0.3s ease; /* Smooth transition for hiding/showing */
+    transform: translateX(0); /* Initially visible */
+}
+
+.navbar.hidden {
+    transform: translateX(-200px); /* Move navbar off-screen when hidden */
+}
+
+
 
 .startpageelements{
     display: flex;
@@ -9,39 +66,28 @@
     gap: 10px;
 }
 
-/* problemType */
-
-.typePage{
-    padding: 1.5%;
-}
-
 .typeelements{
     display: flex;
     flex-direction: column;
-    margin-top: 1.5%;
+    margin-top: 2.5%;
     gap: 10px;
+}
+
+.maincard{
+    background-color: #004d79;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+.maincard:hover{
+    filter: brightness(1.1);
 }
 
 /* isohomogen */
 /* keeping the styles separately for now. We can combine them once we are clear about inputs for each problem */
 
 .input-hom{
-    margin: 1.5%;
-}
-
-.input-abc{
-    display: flex;
     justify-content:space-evenly;
-}
-
-.input-eps{
-    margin-top: 1%;
     display: flex;
-    justify-content:space-evenly;
-}
-
-.input-EnuMu{
-    margin-top: 1%;
-    display: flex;
-    justify-content:space-evenly;
+    margin-bottom: 1%;
 }
