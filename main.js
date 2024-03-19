@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const appExpress = express();
 const port = 3000;
 
+
 //Body parser middleware
 appExpress.use(bodyParser.urlencoded({extended:true}));
 
@@ -56,7 +57,7 @@ appExpress.post('/isohomoinput',(req,res)=>{
   const formData = req.body;
   // console.log(formData);
 
-  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_homogeneous.py', JSON.stringify(formData)]);
+  const pythonProcess = spawn('python',['./Solution_codes/dummy.py', JSON.stringify(formData)]);
   let output = '';
   pythonProcess.stdout.on('data', (data) => {
     output += data.toString();
@@ -69,6 +70,24 @@ appExpress.post('/isohomoinput',(req,res)=>{
     res.render('result.ejs', { output });
   });
 })
+
+appExpress.get('/dummy',(req,res)=>{
+  const pythonProcess = spawn('python',['./Solution_codes/dummy.py','plot']);
+
+  // Handle Python process events
+  pythonProcess.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+  });
+
+  pythonProcess.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+  });
+
+  pythonProcess.on('close', (code) => {
+    console.log(`Python process exited with code ${code}`);
+    res.send('Python function executed successfully');
+  });
+});
 
 const server = appExpress.listen(port, () => {
   console.log(`Express server running at http://localhost:${port}`);

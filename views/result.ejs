@@ -3,6 +3,26 @@
 <h1>Results</h1>
 <% if (output) { %>
     <p>Processed data: <%= output %></p>
+    <button id="plotButton">plot</button>
+    <script>
+        // Function to send request to trigger plot
+        function triggerPythonFunction() {
+            fetch('http://localhost:3000/dummy')
+                .then(response => response.text())
+                .then(message => {
+                    console.log(message);
+                    // Display a message or perform other actions if needed
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Add click event listener to the button
+        document.getElementById('plotButton').addEventListener('click', function() {
+            triggerPythonFunction();
+        });
+    </script>
 <% } else { %>
     <p>HELLO BROO</p>
     <% }%>
+
+
