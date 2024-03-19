@@ -57,7 +57,7 @@ appExpress.get('/settings',(req,res)=>{
 appExpress.post('/isohomoinput',(req,res)=>{
   const formData = req.body;
 
-  const pythonProcess = spawn('python',['./Solution_codes/test.py', JSON.stringify(formData)]);
+  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_homogeneous.py', JSON.stringify(formData)]);
   let output = '';
   pythonProcess.stdout.on('data', (data) => {
     output += data.toString();
