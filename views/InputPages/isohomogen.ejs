@@ -5,21 +5,21 @@
 <div style="margin: 1.5%;">
     
     <p>Add the material dimensions</p>
-    <form action="\isohomoinput"  method="POST">
+    <form action="\isohomoinput"  method="POST" id="isohomo">
     <div class="input-hom">
         <div class="input-group">
             <span class="input-group-text" id="a">a</span>
-            <input class="form-control" type="text" id="a" name="a" required>
+            <input class="form-control" type="number" step="any" id="a" name="a" required>
         </div>
 
         <div class="input-group">
             <span class="input-group-text" id="b">b</span>
-            <input class="form-control" type="text" id="b" name="b" required>
+            <input class="form-control" type="number" step="any" id="b" name="b" required>
         </div>
         
         <div class="input-group">
             <span class="input-group-text" id="c">c</span>
-            <input class="form-control" type="text" id="c" name="c" required>
+            <input class="form-control" type="number" step="any" id="c" name="c" required>
         </div>
     </div>
 
@@ -59,22 +59,20 @@
     <div class="input-hom">
         <div class="input-group">
             <span class="input-group-text"  id="E">E</span>
-            <input type="text" class="form-control" id="E" name="ep" aria-describedby="basic-addon3 basic-addon4" required>
+            <input type="number" class="form-control" id="E" name="ep" aria-describedby="basic-addon3 basic-addon4" required>
         </div>
         <div class="input-group">
             <span class="input-group-text" id="nu">nu</span>
-            <input type="text" class="form-control" id="nu" name="nu" aria-describedby="basic-addon3 basic-addon4" required>
+            <input type="number" class="form-control" id="nu" name="nu" step="any" aria-describedby="basic-addon3 basic-addon4" required min="-0.5" max="0.5" oninput="setCustomValidity('')" onchange="validateNu(this)">
         </div>
         <!-- <div class="input-group">
             <span class="input-group-text" id="mu">mu</span>
             <input type="text" class="form-control" id="mu" name="mu" aria-describedby="basic-addon3 basic-addon4" required>
         </div> -->
-
     </div>
 
-    <button class="btn btn-success">Solve</button>
+    <button class="btn btn-success" type="submit">Solve</button>
 
 </form>
-
-
 </div>
+  

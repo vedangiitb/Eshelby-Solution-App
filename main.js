@@ -5,12 +5,22 @@ const { spawn } = require('child_process');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 const bodyParser = require('body-parser');
-
 const appExpress = express();
 const port = 3000;
 
 
-//Body parser middleware
+const validateInput = (req, res, next) => {
+  const { a, b, c } = req.body;
+  const aValue = parseFloat(a);
+  const bValue = parseFloat(b);
+  const cValue = parseFloat(c);
+
+  if (aValue < bValue && bValue < cValue) {
+    next();
+  } else {
+    res.send("Invalid Input");
+  }
+};
 appExpress.use(bodyParser.urlencoded({extended:true}));
 
 appExpress.engine('ejs',ejsMate);
@@ -55,7 +65,7 @@ appExpress.get('/settings',(req,res)=>{
   res.render('settings')
 })
 
-appExpress.post('/isohomoinput',(req,res)=>{
+appExpress.post('/isohomoinput',validateInput,(req,res)=>{
   const formData = req.body;
 
   const pythonProcess = spawn('python',['./Solution_codes/dummy.py', JSON.stringify(formData)]);
