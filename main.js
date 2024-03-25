@@ -15,7 +15,7 @@ const validateInput = (req, res, next) => {
   const bValue = parseFloat(b);
   const cValue = parseFloat(c);
 
-  if (aValue < bValue && bValue < cValue) {
+  if (aValue > bValue && bValue > cValue) {
     next();
   } else {
     res.send("Invalid Input");
