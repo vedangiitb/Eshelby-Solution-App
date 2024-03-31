@@ -187,7 +187,7 @@ def solve_inside(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu):
 
     t2 = (((b**2)*(I12-I12*nu + 3*nu*I22 + nu*I32))/(8*pi*(1-nu)*(1-2*nu)) - (I1 - (nu/1-nu)*(I2-I3))/(8*pi) - (nu)/(1-2*nu))*eps22
 
-    t3 = (((c**2)*(I3 - nu*I3 + 3*nu*I33 + nu*I23))/(8*pi*(1-nu)*(1-2*nu)) - (I1 - (nu/1-nu)*(I3-I2))/(8*pi) - (nu)/(1-2*nu))*eps33
+    t3 = (((c**2)*(I13 - nu*I13 + 3*nu*I33 + nu*I23))/(8*pi*(1-nu)*(1-2*nu)) - (I1 - (nu/1-nu)*(I3-I2))/(8*pi) - (nu)/(1-2*nu))*eps33
 
     sigma11 = 2*mu*(t1+t2+t3)
 
