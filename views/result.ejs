@@ -2,7 +2,8 @@
 
 <h1>Results</h1>
 <% if (output) { %>
-    <p>Processed data: <%= output %></p>
+    <h4>Processed Data</h4>
+    <p id="dataDisplay"><%= output %></p>
     <button id="plotButton">plot</button>
     <script>
         // Function to send request to trigger plot
@@ -21,6 +22,27 @@
             triggerPythonFunction();
         });
     </script>
+
+    <button id="saveButton">Save Data</button>
+
+    <script>
+        document.getElementById('saveButton').addEventListener('click', () => {
+          const dataToSave = document.getElementById('dataDisplay').textContent.trim();
+          downloadData(dataToSave);
+        });
+    
+        function downloadData(data) {
+          const blob = new Blob([data], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'savedData.txt';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+      </script>
 <% } else { %>
     <p>HELLO BROO</p>
     <% }%>

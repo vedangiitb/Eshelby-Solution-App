@@ -92,3 +92,9 @@ body{
     margin-bottom: 1%;
     gap: 20px;
 }
+
+.loading-text {
+    font-size: 24px;
+    color: #333;
+}
+

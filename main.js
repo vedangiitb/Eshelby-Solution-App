@@ -68,17 +68,25 @@ appExpress.get('/settings',(req,res)=>{
 appExpress.post('/isohomoinput',validateInput,(req,res)=>{
   const formData = req.body;
 
-  const pythonProcess = spawn('python',['./Solution_codes/dummy.py', JSON.stringify(formData)]);
+  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_homogeneous.py', JSON.stringify(formData)]);
   let output = '';
+  let error = '';
   pythonProcess.stdout.on('data', (data) => {
     output += data.toString();
   });
 
+      
+  pythonProcess.stderr.on('data', (data) => {
+    error += data.toString();
+  });
+
   pythonProcess.on('close', (code) => {
     console.log(`Python script exited with code ${code}`);
+    console.log(error);
     console.log(output);
     res.render('result.ejs', { output });
   });
+
 })
 
 appExpress.get('/dummy',(req,res)=>{
@@ -98,6 +106,23 @@ appExpress.get('/dummy',(req,res)=>{
     res.send('Python function executed successfully');
   });
 });
+
+appExpress.post('/saveData', (req, res) => {
+  const data = req.body.data; // Assuming the data is sent in the request body
+  const fileName = 'savedData.txt';
+
+  // Write data to a text file
+  fs.writeFile(fileName, data, (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error saving data');
+    } else {
+      console.log('Data saved successfully');
+      res.send('Data saved successfully');
+    }
+  });
+});
+
 
 const server = appExpress.listen(port, () => {
   console.log(`Express server running at http://localhost:${port}`);

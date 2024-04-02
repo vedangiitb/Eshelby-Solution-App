@@ -74,5 +74,31 @@
     <button class="btn btn-success" type="submit">Solve</button>
 
 </form>
+<div id="processingMessage" style="display: none;">Your results are being processed. Please wait<span id="dots"></span></div>
 </div>
   
+ <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('isohomo').addEventListener('submit', function(event) {
+                document.getElementById('processingMessage').style.display = 'block';
+                countdownDots();
+            });
+        });
+
+        function countdownDots() {
+            let dots = 0;
+            const maxDots = 5;
+            const interval = setInterval(function() {
+                dots++;
+                if (dots > maxDots) {
+                    dots = 0;
+                }
+                document.getElementById('dots').textContent = '.'.repeat(dots);
+
+                if (outputIsLoaded) { 
+                    clearInterval(interval);
+                    document.getElementById('processingMessage').style.display = 'none';
+                }
+            }, 500);
+        }
+    </script>
