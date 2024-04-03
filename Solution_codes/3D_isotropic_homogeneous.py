@@ -150,7 +150,7 @@ def solve_inside(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu):
     F = sp.ellipkinc(theta, k**2)
     E = sp.ellipeinc(theta, k**2)
     I1 = (4*pi*a*b*c)*(F - E) / ((a**2 - b**2)*np.sqrt(a**2 - c**2))
-    I3 = (4*pi*a*b*c)*((b*np.sqrt(a**2-c**2))/(a*c) - E)
+    I3 = ((4*pi*a*b*c)*((b*np.sqrt(a**2-c**2))/(a*c) - E))/((b**2-c**2)*np.sqrt(a**2-c**2))
     I2 = 4*pi - I1 - I3
 
 
