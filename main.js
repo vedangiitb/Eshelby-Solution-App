@@ -65,10 +65,57 @@ appExpress.get('/settings',(req,res)=>{
   res.render('settings')
 })
 
-appExpress.post('/isohomoinput',validateInput,(req,res)=>{
-  const formData = req.body;
+let inputData = {};
 
-  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_homogeneous.py', JSON.stringify(formData)]);
+function convertToMM(value, units) {
+  switch (units) {
+      case 'cm':
+          return value * 10; 
+      case 'm':
+          return value * 1000; 
+      default:
+          return value; // No conversion needed for default unit (mm)
+  }
+}
+
+function convertToGPa(value, units) {
+  switch (units) {
+      case 'MPa':
+          return value * 0.001; 
+      default:
+          return value; // No conversion needed for default unit(GPa)
+  }
+}
+
+appExpress.post('/isohomoinput',validateInput,(req,res)=>{
+
+  const { a,b,c,length_units,eps11,eps22,eps33,eps13,eps23,eps12,ep,E_units,nu } = req.body;
+  // const formData = req.body;
+
+  // Convert values to millimeters
+  const a_mm = convertToMM(parseFloat(a),length_units );
+  const b_mm = convertToMM(parseFloat(b), length_units);
+  const c_mm = convertToMM(parseFloat(c), length_units);
+  const E_GPa = convertToGPa(parseFloat(ep), E_units);
+
+  // Update inputData
+  inputData = {
+    a: a_mm,
+    b: b_mm,
+    c: c_mm,
+    eps11:eps11,
+    eps22:eps22,
+    eps33:eps33,
+    eps13:eps13,
+    eps23:eps23,
+    eps12:eps12,
+    ep:E_GPa,
+    nu:nu
+
+};
+
+
+  const pythonProcess = spawn('python',['./Solution_codes/dummy.py', JSON.stringify(inputData)]);
   let output = '';
   let error = '';
   pythonProcess.stdout.on('data', (data) => {

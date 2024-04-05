@@ -21,6 +21,12 @@
             <span class="input-group-text" id="c">c</span>
             <input class="form-control" type="number" step="any" id="c" name="c" required>
         </div>
+
+        <select name="length_units" class="form-select" aria-label="length-units">
+            <option value="default" selected>mm</option>
+            <option value="cm">cm</option>
+            <option value="m">m</option>
+          </select>
     </div>
 
     <p>Add the stress tensor</p>
@@ -61,6 +67,10 @@
             <span class="input-group-text"  id="E">E</span>
             <input type="number" class="form-control" id="E" name="ep" aria-describedby="basic-addon3 basic-addon4" required min="100" max="500" step="any">
         </div>
+        <select name="E_units" class="form-select" aria-label="length-units">
+            <option value="default" selected>GPa</option>
+            <option value="MPa">MPa</option>
+          </select>
         <div class="input-group">
             <span class="input-group-text" id="nu">nu</span>
             <input type="number" class="form-control" id="nu" name="nu" step="any" aria-describedby="basic-addon3 basic-addon4" required min="-0.5" max="0.5" oninput="setCustomValidity('')" onchange="validateNu(this)">
