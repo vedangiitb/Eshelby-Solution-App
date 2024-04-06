@@ -89,8 +89,42 @@ function convertToGPa(value, units) {
 
 appExpress.post('/isohomoinput',validateInput,(req,res)=>{
 
-  const { a,b,c,length_units,eps11,eps22,eps33,eps13,eps23,eps12,ep,E_units,nu } = req.body;
-  // const formData = req.body;
+  // Extract non-dynamic input
+  const a = req.body.a;
+  const b = req.body.b;
+  const c = req.body.c;
+  const length_units = req.body.length_units;
+  const eps11 = req.body.eps11;
+  const eps22 = req.body.eps22;
+  const eps33 = req.body.eps33;
+  const eps13 = req.body.eps13;
+  const eps23 = req.body.eps23;
+  const eps12 = req.body.eps12;
+  const ep = req.body.ep;
+  const E_units = req.body.E_units;
+  const nu = req.body.nu;
+
+
+
+  // Extract dynamic inputs
+
+  const inputCount = parseInt(req.body.inputCount);
+
+  const dynamicInputs = [];
+    for (let i = 1; i <= inputCount; i++) {
+        const values = [];
+        
+            const x = req.body[`value${i}_x`];
+            const y = req.body[`value${i}_y`];
+            const z = req.body[`value${i}_z`];
+            
+            values.push(convertToMM(parseFloat(x), length_units));
+            values.push(convertToMM(parseFloat(y), length_units));
+            values.push(convertToMM(parseFloat(z), length_units));
+        
+        dynamicInputs.push(values);
+    }
+  
 
   // Convert values to millimeters
   const a_mm = convertToMM(parseFloat(a),length_units );
@@ -110,12 +144,15 @@ appExpress.post('/isohomoinput',validateInput,(req,res)=>{
     eps23:eps23,
     eps12:eps12,
     ep:E_GPa,
-    nu:nu
+    nu:nu,
+    targets:dynamicInputs
 
 };
 
+  console.log(inputData);
 
-  const pythonProcess = spawn('python',['./Solution_codes/dummy.py', JSON.stringify(inputData)]);
+
+  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_homogeneous.py', JSON.stringify(inputData)]);
   let output = '';
   let error = '';
   pythonProcess.stdout.on('data', (data) => {

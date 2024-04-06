@@ -6,6 +6,7 @@
     
     <p>Add the material dimensions</p>
     <form action="\isohomoinput"  method="POST" id="isohomo">
+        
     <div class="input-hom">
         <div class="input-group">
             <span class="input-group-text" id="a">a</span>
@@ -79,7 +80,18 @@
             <span class="input-group-text" id="mu">mu</span>
             <input type="text" class="form-control" id="mu" name="mu" aria-describedby="basic-addon3 basic-addon4" required>
         </div> -->
+
     </div>
+    <p>Add target points for outside the inclusion</p>
+    <input type="hidden" id="inputCount" name="inputCount" value="0"> <!-- Hidden input field to store inputCount -->
+    <div class="input-hom">
+        <div id="inputFields">
+            <!-- Dynamic input fields will be added here -->
+        </div>
+        
+    </div>
+    <button type="button" id="addInput">Add Target</button><br>
+        <!-- <button type="submit">Submit</button> -->
 
     <button class="btn btn-success" type="submit">Solve</button>
 
@@ -88,6 +100,47 @@
 </div>
   
  <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputForm = document.getElementById('isohomo');
+            const inputFields = document.getElementById('inputFields');
+            const addInputButton = document.getElementById('addInput');
+
+            let inputCount = 0;
+
+            addInputButton.addEventListener('click', function () {
+                inputCount++;
+
+                // Update the hidden input field with the current value of inputCount
+                document.getElementById('inputCount').value = inputCount;
+
+                const inputField = document.createElement('div');
+                inputField.innerHTML = `
+                <div class="input-hom">
+                    <div class="input-group">
+                        <span class="input-group-text" id="x">x</span>
+                        <input class="form-control" type="number" step="any" id="value${inputCount}_x" name="value${inputCount}_x" >
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-text" id="y">y</span>
+                        <input class="form-control" type="number" step="any" id="value${inputCount}_y" name="value${inputCount}_y" >
+                    </div>
+                    
+                    <div class="input-group">
+                        <span class="input-group-text" id="z">z</span>
+                        <input class="form-control" type="number" step="any" id="value${inputCount}_z" name="value${inputCount}_z" >
+                    </div>
+
+                   
+                </div>
+
+           
+                    
+                `;
+                inputFields.appendChild(inputField);
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('isohomo').addEventListener('submit', function(event) {
                 document.getElementById('processingMessage').style.display = 'block';

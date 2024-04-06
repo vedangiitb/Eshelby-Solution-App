@@ -236,18 +236,17 @@ try:
     eps31 = float(form_data.get('eps13'))
     E = float(form_data.get('ep'))
     nu = float(form_data.get('nu'))
-
+    targets = form_data.get('targets')
 
     axis = [a, b, c]
 
     # print(f"input data:{a,b,c,eps11,eps12,eps31,eps23,eps22,eps33,E,nu}")
 
     output_data = solve_inside(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu)
-    print(output_data)
+    print("Inside inclusion:\n" + output_data + "\n")
 
 except Exception as e:
     print("error:", e)
-
 
 try:
     # CODE FOR OUTSIDE PART (MATRIX)
@@ -255,50 +254,56 @@ try:
 
     epsilon_star = [[eps11, eps12, 0], [0, eps22, eps23], [eps31, 0, eps33]]
 
-    X = [7, 7, 7]  # Exterior Point
-    lbd = find_lambda(X, axis)
-        # print("Lambda is: ", lbd)
+    for target in targets:
 
-        #Calculating I, I1, I2, I3, I11, I22, I33, etc
-    I = IIJ(axis, lbd, 0, 0)
-    Ii = [0, 0, 0]
-    for i in range(3):
-        Ii[i] = IIJ(axis, lbd, i, 0)
-    Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    for i in range(3):
-        for j in range(3):
-            Iij[i][j] = IIJ(axis, lbd, i, j)
+        # X = [7, 7, 7]  # Exterior Point
+        X = target  # Exterior Point
 
-    Sijkl = get_Sijkl(axis, I, Ii, Iij)
+        lbd = find_lambda(X, axis)
+            # print("Lambda is: ", lbd)
 
-    lbd_der = lamb_der(X, axis, lbd)
-    lbd_d_der = lamb_der2(X, axis, lbd, lbd_der)
+            #Calculating I, I1, I2, I3, I11, I22, I33, etc
+        I = IIJ(axis, lbd, 0, 0)
+        Ii = [0, 0, 0]
+        for i in range(3):
+            Ii[i] = IIJ(axis, lbd, i, 0)
+        Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        for i in range(3):
+            for j in range(3):
+                Iij[i][j] = IIJ(axis, lbd, i, j)
 
-    IIj = Ii_j_(X, axis, lbd, lbd_der)
-    IIJk = Iij_k_(X, axis, lbd, lbd_der)
-    IIJkl = Iij_kl_(X, axis, lbd, lbd_der, lbd_d_der)
-    IIjk = Ii_jk_(X, axis, lbd, lbd_der, lbd_d_der)
+        Sijkl = get_Sijkl(axis, I, Ii, Iij)
 
-    deltaij = np.identity(3)
-    Dijkl = get_Dijkl(Sijkl, deltaij, X, axis, IIj, IIJk, IIJkl, IIjk)
+        lbd_der = lamb_der(X, axis, lbd)
+        lbd_d_der = lamb_der2(X, axis, lbd, lbd_der)
 
-    epsilon = np.zeros((3, 3))
+        IIj = Ii_j_(X, axis, lbd, lbd_der)
+        IIJk = Iij_k_(X, axis, lbd, lbd_der)
+        IIJkl = Iij_kl_(X, axis, lbd, lbd_der, lbd_d_der)
+        IIjk = Ii_jk_(X, axis, lbd, lbd_der, lbd_d_der)
 
-    for i in range(3):
-        for j in range(3):
-            for k in range(3):
-                for l in range(3):
-                    epsilon[i][j] += Dijkl[i,j,k,l] * epsilon_star[k][l]
+        deltaij = np.identity(3)
+        Dijkl = get_Dijkl(Sijkl, deltaij, X, axis, IIj, IIJk, IIJkl, IIjk)
+
+        epsilon = np.zeros((3, 3))
+
+        for i in range(3):
+            for j in range(3):
+                for k in range(3):
+                    for l in range(3):
+                        epsilon[i][j] += Dijkl[i,j,k,l] * epsilon_star[k][l]
 
 
-    sigma = np.zeros((3,3))
-    epsilon_kk = epsilon[0][0] + epsilon[1][1] + epsilon[2][2]
-    epsilon_star_kk = epsilon_star[0][0] + epsilon_star[1][1] + epsilon_star[2][2]
-    lamda = 2*mu*nu/(1-2*nu)
-    for i in range(3):
-        for j in range(3):
-            sigma[i][j] = 2*mu*(epsilon[i][j] - epsilon_star[i][j]) + lamda*(epsilon_kk - epsilon_star_kk)
+        sigma = np.zeros((3,3))
+        epsilon_kk = epsilon[0][0] + epsilon[1][1] + epsilon[2][2]
+        epsilon_star_kk = epsilon_star[0][0] + epsilon_star[1][1] + epsilon_star[2][2]
+        lamda = 2*mu*nu/(1-2*nu)
+        for i in range(3):
+            for j in range(3):
+                sigma[i][j] = 2*mu*(epsilon[i][j] - epsilon_star[i][j]) + lamda*(epsilon_kk - epsilon_star_kk)
 
-    print(sigma)
+        print(f'Outside inclusion at point {X}: {sigma}')
+
+
 except Exception as e:
     print("error:", e)
