@@ -1,12 +1,20 @@
 <%- layout('./InputPages/inputTemplate') %>
 
-<h3>Isotropic Homogenous</h3>
 
+<h3>Isotropic Homogenous</h3>
 <div style="margin: 1.5%;">
     
-    <p>Add the material dimensions</p>
     <form action="\isohomoinput"  method="POST" id="isohomo">
-        
+
+    <div style="display: flex; gap: 10px;">
+    <p>Add the material dimensions</p>
+    <select name="length_units" class="form-select" aria-label="length-units" style="width: 9%; height: 28px; font-size: 14px; padding: 0.5%;padding-top: 0.3%; color: white; background-color: #004f8b;">
+        <option value="default" selected>mm</option>
+        <option value="cm">cm</option>
+        <option value="m">m</option>
+    </select>
+    </div>
+
     <div class="input-hom">
         <div class="input-group">
             <span class="input-group-text" id="a">a</span>
@@ -22,12 +30,6 @@
             <span class="input-group-text" id="c">c</span>
             <input class="form-control" type="number" step="any" id="c" name="c" required>
         </div>
-
-        <select name="length_units" class="form-select" aria-label="length-units">
-            <option value="default" selected>mm</option>
-            <option value="cm">cm</option>
-            <option value="m">m</option>
-          </select>
     </div>
 
     <p>Add the stress tensor</p>
@@ -64,14 +66,15 @@
     </div>
     <p>Add the material constants</p>
     <div class="input-hom">
-        <div class="input-group">
+        <div class="input-group" style="display: flex;">
             <span class="input-group-text"  id="E">E</span>
-            <input type="number" class="form-control" id="E" name="ep" aria-describedby="basic-addon3 basic-addon4" required min="100" max="500" step="any">
+            <input type="number" class="form-control" style="flex-grow: 2;" id="E" name="ep" aria-describedby="basic-addon3 basic-addon4" required min="100" max="500" step="any">
+            <select name="E_units" class="form-select" aria-label="length-units" style="flex-grow: 1; background-color: #004f8b; color: white;">
+                <option value="default" selected>GPa</option>
+                <option value="MPa">MPa</option>
+              </select>
         </div>
-        <select name="E_units" class="form-select" aria-label="length-units">
-            <option value="default" selected>GPa</option>
-            <option value="MPa">MPa</option>
-          </select>
+        
         <div class="input-group">
             <span class="input-group-text" id="nu">nu</span>
             <input type="number" class="form-control" id="nu" name="nu" step="any" aria-describedby="basic-addon3 basic-addon4" required min="-0.5" max="0.5" oninput="setCustomValidity('')" onchange="validateNu(this)">
@@ -82,7 +85,10 @@
         </div> -->
 
     </div>
-    <p>Add target points for outside the inclusion</p>
+    <div style="display: flex; gap: 10px;">
+        <p>Add target points for outside the inclusion</p>
+        <button type="button" id="addInput" class="btn btn-success">Add Target</button>
+    </div>
     <input type="hidden" id="inputCount" name="inputCount" value="0"> <!-- Hidden input field to store inputCount -->
     <div class="input-hom">
         <div id="inputFields">
@@ -90,13 +96,12 @@
         </div>
         
     </div>
-    <button type="button" id="addInput">Add Target</button><br>
+    
         <!-- <button type="submit">Submit</button> -->
-
     <button class="btn btn-success" type="submit">Solve</button>
 
 </form>
-<div id="processingMessage" style="display: none;">Your results are being processed. Please wait<span id="dots"></span></div>
+    <div id="processingMessage" style="display: none;">Your results are being processed. Please wait<span id="dots"></span></div>
 </div>
   
  <script>
@@ -118,17 +123,17 @@
                 <div class="input-hom">
                     <div class="input-group">
                         <span class="input-group-text" id="x">x</span>
-                        <input class="form-control" type="number" step="any" id="value${inputCount}_x" name="value${inputCount}_x" >
+                        <input class="form-control" type="number" step="any" id="value${inputCount}_x" name="value${inputCount}_x" required>
                     </div>
 
                     <div class="input-group">
                         <span class="input-group-text" id="y">y</span>
-                        <input class="form-control" type="number" step="any" id="value${inputCount}_y" name="value${inputCount}_y" >
+                        <input class="form-control" type="number" step="any" id="value${inputCount}_y" name="value${inputCount}_y" required>
                     </div>
                     
                     <div class="input-group">
                         <span class="input-group-text" id="z">z</span>
-                        <input class="form-control" type="number" step="any" id="value${inputCount}_z" name="value${inputCount}_z" >
+                        <input class="form-control" type="number" step="any" id="value${inputCount}_z" name="value${inputCount}_z" required>
                     </div>
 
                    

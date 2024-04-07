@@ -6,7 +6,7 @@ body{
 }
 
 .container{
-    padding-left: 250px;
+    padding-left: 200px;
     padding-top: 35px;
 }
 
@@ -87,7 +87,7 @@ body{
 /* keeping the styles separately for now. We can combine them once we are clear about inputs for each problem */
 
 .input-hom{
-    justify-content:space-evenly;
+    justify-content:space-between;
     display: flex;
     margin-bottom: 1%;
     gap: 20px;

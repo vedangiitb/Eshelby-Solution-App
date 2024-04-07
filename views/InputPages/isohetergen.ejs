@@ -1,1 +1,184 @@
-<%- layout('./inputTemplate') %>
+<%- layout('./InputPages/inputTemplate') %>
+
+<h3>Isotropic Heterogenous</h3>
+<div style="margin: 1.5%;">
+    
+    <form action="\isoinhomoinput"  method="POST" id="isohomo">
+    <div style="display: flex; gap: 10px;">
+        <p>Add the material dimensions</p>
+        <select name="length_units" class="form-select" aria-label="length-units" style="width: 9%; height: 28px; font-size: 14px; padding: 0.5%;padding-top: 0.3%; color: white; background-color: #004f8b;">
+            <option value="default" selected>mm</option>
+            <option value="cm">cm</option>
+            <option value="m">m</option>
+        </select>
+        </div>
+        
+    <div class="input-hom">
+        <div class="input-group">
+            <span class="input-group-text" id="a" >a</span>
+            <input class="form-control" type="number" step="any" id="a" name="a" required>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text" id="b">b</span>
+            <input class="form-control" type="number" step="any" id="b" name="b" required>
+        </div>
+        
+        <div class="input-group">
+            <span class="input-group-text" id="c">c</span>
+            <input class="form-control" type="number" step="any" id="c" name="c" required>
+        </div>
+
+
+    </div>
+
+    <p>Add the stress tensor</p>
+    <div class="input-hom">
+        <div class="input-group">
+            <span class="input-group-text" id="eps11">eps11</span>
+            <input type="number" class="form-control" id="eps11" name="eps11" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any">
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text"  id="eps22">eps22</span>
+            <input type="number" class="form-control" id="eps22" name="eps22" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any">
+        </div>
+        
+        <div class="input-group">
+            <span class="input-group-text" id="eps33">eps33</span>
+            <input type="number" class="form-control" id="eps33" name="eps33" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any">
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text" id="eps13">eps13</span>
+            <input type="number" class="form-control" id="eps13" name="eps13" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any">
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text" id="eps23" >eps23</span>
+            <input type="number" class="form-control" id="eps23" name ="eps23" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any"> 
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text" id="eps12" >eps12</span>
+            <input type="number" class="form-control" id="eps12" name="eps12" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any">
+        </div>
+    </div>
+    <p>Add the material constants</p>
+    <div class="input-hom">
+        <div class="input-group">
+            <span class="input-group-text"  id="E">E</span>
+            <input type="number" class="form-control" id="E" name="ep" aria-describedby="basic-addon3 basic-addon4" required min="100" max="500" step="any">
+            <select name="E_units" class="form-select" aria-label="length-units">
+                <option value="default" selected>GPa</option>
+                <option value="MPa">MPa</option>
+              </select>
+        </div>
+        <div class="input-group"  style="display: flex;">
+            <span class="input-group-text"  id="E">E*</span>
+            <input type="number" class="form-control" id="Estar" name="eps" aria-describedby="basic-addon3 basic-addon4" required min="100" max="500" step="any">
+            <select name="E_units" class="form-select" aria-label="length-units" style="flex-grow: 1; background-color: #004f8b; color: white;">
+                <option value="default" selected>GPa</option>
+                <option value="MPa">MPa</option>
+              </select>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text" id="nu">nu</span>
+            <input type="number" class="form-control" id="nu" name="nu" step="any" aria-describedby="basic-addon3 basic-addon4" required min="-0.5" max="0.5" oninput="setCustomValidity('')" onchange="validateNu(this)">
+        </div>
+        <div class="input-group">
+            <span class="input-group-text" id="nu">nu*</span>
+            <input type="number" class="form-control" id="nustar" name="nus" step="any" aria-describedby="basic-addon3 basic-addon4" required min="-0.5" max="0.5" oninput="setCustomValidity('')" onchange="validateNu(this)">
+        </div>
+        <!-- <div class="input-group">
+            <span class="input-group-text" id="mu">mu</span>
+            <input type="text" class="form-control" id="mu" name="mu" aria-describedby="basic-addon3 basic-addon4" required>
+        </div> -->
+
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <p>Add target points for outside the inclusion</p>
+        <button type="button" id="addInput" class="btn btn-success">Add Target</button>
+    </div>
+    <input type="hidden" id="inputCount" name="inputCount" value="0"> <!-- Hidden input field to store inputCount -->
+    <div class="input-hom">
+        <div id="inputFields">
+            <!-- Dynamic input fields will be added here -->
+        </div>
+        
+    </div>
+        <!-- <button type="submit">Submit</button> -->
+
+    <button class="btn btn-success" type="submit">Solve</button>
+
+</form>
+<div id="processingMessage" style="display: none;">Your results are being processed. Please wait<span id="dots"></span></div>
+</div>
+  
+ <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputForm = document.getElementById('isohomo');
+            const inputFields = document.getElementById('inputFields');
+            const addInputButton = document.getElementById('addInput');
+
+            let inputCount = 0;
+
+            addInputButton.addEventListener('click', function () {
+                inputCount++;
+
+                // Update the hidden input field with the current value of inputCount
+                document.getElementById('inputCount').value = inputCount;
+
+                const inputField = document.createElement('div');
+                inputField.innerHTML = `
+                <div class="input-hom">
+                    <div class="input-group">
+                        <span class="input-group-text" id="x">x</span>
+                        <input class="form-control" type="number" step="any" id="value${inputCount}_x" name="value${inputCount}_x" required>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-text" id="y">y</span>
+                        <input class="form-control" type="number" step="any" id="value${inputCount}_y" name="value${inputCount}_y"  required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <span class="input-group-text" id="z">z</span>
+                        <input class="form-control" type="number" step="any" id="value${inputCount}_z" name="value${inputCount}_z" required>
+                    </div>
+
+                   
+                </div>
+
+           
+                    
+                `;
+                inputFields.appendChild(inputField);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('isohomo').addEventListener('submit', function(event) {
+                document.getElementById('processingMessage').style.display = 'block';
+                countdownDots();
+            });
+        });
+
+        function countdownDots() {
+            let dots = 0;
+            const maxDots = 5;
+            const interval = setInterval(function() {
+                dots++;
+                if (dots > maxDots) {
+                    dots = 0;
+                }
+                document.getElementById('dots').textContent = '.'.repeat(dots);
+
+                if (outputIsLoaded) { 
+                    clearInterval(interval);
+                    document.getElementById('processingMessage').style.display = 'none';
+                }
+            }, 500);
+        }
+    </script>

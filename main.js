@@ -173,6 +173,93 @@ appExpress.post('/isohomoinput',validateInput,(req,res)=>{
 
 })
 
+appExpress.post('/isoinhomoinput',validateInput,(req,res)=>{
+
+  // Extract non-dynamic input
+  const a = req.body.a;
+  const b = req.body.b;
+  const c = req.body.c;
+  const length_units = req.body.length_units;
+  const eps11 = req.body.eps11;
+  const eps22 = req.body.eps22;
+  const eps33 = req.body.eps33;
+  const eps13 = req.body.eps13;
+  const eps23 = req.body.eps23;
+  const eps12 = req.body.eps12;
+  const ep = req.body.ep;
+  const eps = req.body.eps;
+  const E_units = req.body.E_units;
+  const nu = req.body.nu;
+  const nus = req.bodu.nus;
+
+  // Extract dynamic inputs
+  const inputCount = parseInt(req.body.inputCount);
+
+  const dynamicInputs = [];
+    for (let i = 1; i <= inputCount; i++) {
+        const values = [];
+        
+            const x = req.body[`value${i}_x`];
+            const y = req.body[`value${i}_y`];
+            const z = req.body[`value${i}_z`];
+            
+            values.push(convertToMM(parseFloat(x), length_units));
+            values.push(convertToMM(parseFloat(y), length_units));
+            values.push(convertToMM(parseFloat(z), length_units));
+        
+        dynamicInputs.push(values);
+    }
+  
+
+  // Convert values to millimeters
+  const a_mm = convertToMM(parseFloat(a),length_units );
+  const b_mm = convertToMM(parseFloat(b), length_units);
+  const c_mm = convertToMM(parseFloat(c), length_units);
+  const E_GPa = convertToGPa(parseFloat(ep), E_units);
+  const ES_GPa = convertToGPa(parseFloat(eps),E_units);
+
+  // Update inputData
+  inputData = {
+    a: a_mm,
+    b: b_mm,
+    c: c_mm,
+    eps11:eps11,
+    eps22:eps22,
+    eps33:eps33,
+    eps13:eps13,
+    eps23:eps23,
+    eps12:eps12,
+    ep:E_GPa,
+    eps: ES_GPa,
+    nu:nu,
+    nus:nus,
+    targets:dynamicInputs
+};
+
+  console.log(inputData);
+
+
+  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_inhomogeneous.py', JSON.stringify(inputData)]);
+  let output = '';
+  let error = '';
+  pythonProcess.stdout.on('data', (data) => {
+    output += data.toString();
+  });
+
+      
+  pythonProcess.stderr.on('data', (data) => {
+    error += data.toString();
+  });
+
+  pythonProcess.on('close', (code) => {
+    console.log(`Python script exited with code ${code}`);
+    console.log(error);
+    console.log(output);
+    res.render('result.ejs', { output });
+  });
+
+})
+
 appExpress.get('/dummy',(req,res)=>{
   const pythonProcess = spawn('python',['./Solution_codes/dummy.py','plot']);
 
@@ -221,6 +308,7 @@ function createWindow() {
       nodeIntegration: true
     }
   });
+  win.maximize();
 
   win.loadURL(`http://localhost:${port}`);
 
