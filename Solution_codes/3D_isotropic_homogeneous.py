@@ -215,9 +215,7 @@ def solve_inside(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu):
 
     sigma33 = 2*mu*(w1+w2+w3)
 
-    output_data = f"sigma11: {sigma11}, sigma22: {sigma22}, sigma33: {sigma33}, sigma12: {sigma12}, sigma13: {sigma31}, sigma23: {sigma23}"
-
-    return output_data
+    return [round(sigma11,5),round(sigma22,5),round(sigma33,5),round(sigma12,5),round(sigma31,5),round(sigma23,5)]
 
 
 try:
@@ -243,7 +241,10 @@ try:
     # print(f"input data:{a,b,c,eps11,eps12,eps31,eps23,eps22,eps33,E,nu}")
 
     output_data = solve_inside(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu)
-    print("Inside inclusion:\n" + output_data + "\n")
+    print("For all points inside the inclusion [Since the material is Isotropic and Homogenous, the stress values will be same at all points]")
+    epss = ['sigma11','sigma22','sigma33','sigma12','sigma13','sigma23']
+    for (stress,value) in zip(epss,output_data):
+        print(f"{stress}: {value}")
 
 except Exception as e:
     print("error:", e)
@@ -301,8 +302,10 @@ try:
         for i in range(3):
             for j in range(3):
                 sigma[i][j] = 2*mu*(epsilon[i][j] - epsilon_star[i][j]) + lamda*(epsilon_kk - epsilon_star_kk)
-
-        print(f'Outside inclusion at point {X}: {sigma}')
+        print()
+        print("For points outside the exclusion, the stress values are")
+        # Check this and output accordingly on output page
+        print(f'Outside inclusion at point {X}:\n {sigma}')
 
 
 except Exception as e:

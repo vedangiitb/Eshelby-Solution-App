@@ -2,9 +2,13 @@
 
 
 <h3>Isotropic Homogenous</h3>
-<div style="margin: 1.5%;">
-    
+<div style="margin-left: 1.5%;">
     <form action="\isohomoinput"  method="POST" id="isohomo">
+
+    <div class="btn-wrapper" style="display: flex; justify-content: flex-end;">
+        <button class="btn btn-outline-warning" type="button" onclick="fillDefaultValues()">Fill with default values</button>
+    </div>
+          
 
     <div style="display: flex; gap: 10px;">
     <p>Add the material dimensions</p>
@@ -17,17 +21,17 @@
 
     <div class="input-hom">
         <div class="input-group">
-            <span class="input-group-text" id="a">a</span>
+            <span class="input-group-text" id="a_">a</span>
             <input class="form-control" type="number" step="any" id="a" name="a" required>
         </div>
 
         <div class="input-group">
-            <span class="input-group-text" id="b">b</span>
+            <span class="input-group-text" id="b_">b</span>
             <input class="form-control" type="number" step="any" id="b" name="b" required>
         </div>
         
         <div class="input-group">
-            <span class="input-group-text" id="c">c</span>
+            <span class="input-group-text" id="c_">c</span>
             <input class="form-control" type="number" step="any" id="c" name="c" required>
         </div>
     </div>
@@ -35,39 +39,39 @@
     <p>Add the stress tensor</p>
     <div class="input-hom">
         <div class="input-group">
-            <span class="input-group-text" id="eps11">eps11</span>
+            <span class="input-group-text" id="eps11_">eps11</span>
             <input type="number" class="form-control" id="eps11" name="eps11" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any">
         </div>
 
         <div class="input-group">
-            <span class="input-group-text"  id="eps22">eps22</span>
+            <span class="input-group-text"  id="eps22_">eps22</span>
             <input type="number" class="form-control" id="eps22" name="eps22" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any">
         </div>
         
         <div class="input-group">
-            <span class="input-group-text" id="eps33">eps33</span>
+            <span class="input-group-text" id="eps33_">eps33</span>
             <input type="number" class="form-control" id="eps33" name="eps33" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any">
         </div>
 
         <div class="input-group">
-            <span class="input-group-text" id="eps13">eps13</span>
+            <span class="input-group-text" id="eps13_">eps13</span>
             <input type="number" class="form-control" id="eps13" name="eps13" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any">
         </div>
 
         <div class="input-group">
-            <span class="input-group-text" id="eps23" >eps23</span>
+            <span class="input-group-text" id="eps23_" >eps23</span>
             <input type="number" class="form-control" id="eps23" name ="eps23" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any"> 
         </div>
 
         <div class="input-group">
-            <span class="input-group-text" id="eps12" >eps12</span>
+            <span class="input-group-text" id="eps12_" >eps12</span>
             <input type="number" class="form-control" id="eps12" name="eps12" aria-describedby="basic-addon3 basic-addon4" required min="0" max="0.01" step="any">
         </div>
     </div>
     <p>Add the material constants</p>
     <div class="input-hom">
         <div class="input-group" style="display: flex;">
-            <span class="input-group-text"  id="E">E</span>
+            <span class="input-group-text"  id="E_">E</span>
             <input type="number" class="form-control" style="flex-grow: 2;" id="E" name="ep" aria-describedby="basic-addon3 basic-addon4" required min="100" max="500" step="any">
             <select name="E_units" class="form-select" aria-label="length-units" style="flex-grow: 1; background-color: #004f8b; color: white;">
                 <option value="default" selected>GPa</option>
@@ -76,7 +80,7 @@
         </div>
         
         <div class="input-group">
-            <span class="input-group-text" id="nu">nu</span>
+            <span class="input-group-text" id="nu_">nu</span>
             <input type="number" class="form-control" id="nu" name="nu" step="any" aria-describedby="basic-addon3 basic-addon4" required min="-0.5" max="0.5" oninput="setCustomValidity('')" onchange="validateNu(this)">
         </div>
         <!-- <div class="input-group">
@@ -170,3 +174,19 @@
             }, 500);
         }
     </script>
+
+<script>
+     function fillDefaultValues() {
+        document.getElementById('a').value = 3;
+        document.getElementById('b').value = 2;
+        document.getElementById('c').value = 1;
+        document.getElementById('eps11').value = 0.001;
+        document.getElementById('eps22').value = 0.001;
+        document.getElementById('eps33').value = 0.001;
+        document.getElementById('eps12').value = 0.001;
+        document.getElementById('eps13').value = 0.001;
+        document.getElementById('eps23').value = 0.001;
+        document.getElementById('E').value = 120;
+        document.getElementById('nu').value = 0.3;
+     }
+</script>

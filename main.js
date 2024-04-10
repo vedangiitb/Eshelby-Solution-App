@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain} = require('electron');
+const { app, BrowserWindow, ipcMain,shell} = require('electron');
 const express = require('express');
 const path = require('path');
 const { spawn } = require('child_process');
@@ -307,6 +307,11 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true
     }
+  });
+
+  win.webContents.on('will-navigate', (event, url) => {
+    event.preventDefault(); // Prevent the default behavior
+    shell.openExternal(url); // Open the URL in the default browser
   });
   win.maximize();
 
