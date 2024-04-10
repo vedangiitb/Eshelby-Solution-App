@@ -6,8 +6,44 @@ try:
     pi = np.pi
     import sys
     import json
+    import pandas as pd
 except Exception as e:
     print(e)
+
+def saveData(points,data):
+    x = []
+    y = []
+    z = []
+
+    for p in points:
+        x.append(p[0])
+        y.append(p[1])
+        z.append(p[2])
+    
+    sigma11 = []
+    sigma12 = []
+    sigma13 = []
+    sigma21 = []
+    sigma22 = []
+    sigma23 = []
+    sigma31 = []
+    sigma32 = []
+    sigma33 = []
+
+    for d in data:
+        sigma11.append(d[0])
+        sigma12.append(d[1])
+        sigma13.append(d[2])
+        sigma21.append(d[3])
+        sigma22.append(d[4])
+        sigma23.append(d[5])
+        sigma31.append(d[6])
+        sigma32.append(d[7])
+        sigma33.append(d[8])
+
+    df = pd.DataFrame(list(zip(x,y,z,sigma11,sigma22,sigma33,sigma12,sigma13,sigma23)),columns=["x","y","z",'sigma11','sigma22','sigma33','sigma12','sigma13','sigma23'])
+
+    df.to_csv('public/temp.csv',index=False)
 
 def find_lambda(X, axis):
     ans = sym.symbols('ans')
@@ -255,6 +291,7 @@ try:
 
     epsilon_star = [[eps11, eps12, 0], [0, eps22, eps23], [eps31, 0, eps33]]
 
+    opData = []
     for target in targets:
 
         # X = [7, 7, 7]  # Exterior Point
@@ -299,13 +336,18 @@ try:
         epsilon_kk = epsilon[0][0] + epsilon[1][1] + epsilon[2][2]
         epsilon_star_kk = epsilon_star[0][0] + epsilon_star[1][1] + epsilon_star[2][2]
         lamda = 2*mu*nu/(1-2*nu)
+        stressArr = []
         for i in range(3):
             for j in range(3):
                 sigma[i][j] = 2*mu*(epsilon[i][j] - epsilon_star[i][j]) + lamda*(epsilon_kk - epsilon_star_kk)
+                stressArr.append(sigma[i][j])
         print()
         print("For points outside the exclusion, the stress values are")
         # Check this and output accordingly on output page
         print(f'Outside inclusion at point {X}:\n {sigma}')
+        opData.append(stressArr)
+    
+    saveData(targets,opData)
 
 
 except Exception as e:
