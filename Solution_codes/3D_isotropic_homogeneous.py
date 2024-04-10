@@ -66,12 +66,12 @@ def IIJ(axis, L, i, j):
         return ans*2*pi*axis[0]*axis[1]*axis[2]
     elif j==0:
         def v(s):
-            return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i]**2 + s))
+            return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i-1]**2 + s))
         ans = integrate.quad(v, L, np.inf) [0]
         return ans*2*pi*axis[0]*axis[1]*axis[2]
     else:
         def v(s):
-            return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i]**2 + s)*(axis[j]**2 + s))
+            return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i-1]**2 + s)*(axis[j-1]**2 + s))
         ans = integrate.quad(v, L, np.inf) [0]
         return ans*2*pi*axis[0]*axis[1]*axis[2]
 
@@ -304,11 +304,11 @@ try:
         I = IIJ(axis, lbd, 0, 0)
         Ii = [0, 0, 0]
         for i in range(3):
-            Ii[i] = IIJ(axis, lbd, i, 0)
+            Ii[i] = IIJ(axis, lbd, i+1, 0)
         Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
         for i in range(3):
             for j in range(3):
-                Iij[i][j] = IIJ(axis, lbd, i, j)
+                Iij[i][j] = IIJ(axis, lbd, i+1, j+1)
 
         Sijkl = get_Sijkl(axis, I, Ii, Iij)
 
