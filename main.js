@@ -45,14 +45,6 @@ appExpress.get('/isohetergen',(req,res)=>{
   res.render('InputPages/isohetergen')
 })
 
-appExpress.get('/anisohomogen',(req,res)=>{
-  res.render('InputPages/anisohomogen')
-})
-
-appExpress.get('/anisoheterogen',(req,res)=>{
-  res.render('InputPages/anisoheterogen')
-})
-
 appExpress.get('/learnproblem',(req,res)=>{
   res.render('Tuts/problemTut')
 })
