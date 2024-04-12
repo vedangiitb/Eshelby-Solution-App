@@ -47,9 +47,9 @@ def get_Sijkl(axis, I, Ii, Iij):
         for j in range(3):
             for k in range(3):
                 for l in range(3):
-                    t1 = np.identity(3)[i, j] * np.identity(3)[k, l] * (2 * 0.3 * Ii[i] - Ii[k] + (axis[i]**2) * Iij[k][i])
-                    t2 = (np.identity(3)[i, k] * np.identity(3)[j, l] + np.identity(3)[i, l] * np.identity(3)[j, k]) * ((axis[i]**2) * Iij[i][j] - Ii[j] + (1 - 0.3) * (Ii[k] + Ii[l]))
-                    Sijkl[i, j, k, l] = (t1 + t2) / (8 * np.pi * (1 - 0.3))
+                    t1 = np.identity(3)[i, j] * np.identity(3)[k, l] * (2 * nu * Ii[i] - Ii[k] + (axis[i]**2) * Iij[k][i])
+                    t2 = (np.identity(3)[i, k] * np.identity(3)[j, l] + np.identity(3)[i, l] * np.identity(3)[j, k]) * ((axis[i]**2) * Iij[i][j] - Ii[j] + (1 - nu) * (Ii[k] + Ii[l]))
+                    Sijkl[i, j, k, l] = (t1 + t2) / (8 * np.pi * (1 - nu))
     return Sijkl
 
 
