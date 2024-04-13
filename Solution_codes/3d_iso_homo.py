@@ -249,9 +249,9 @@ def calc_interior():
     #stress_inside = np.array([[sigma11, sigma12, sigma31], [sigma12, sigma22, sigma23], [sigma31, sigma23, sigma33]])
     #print(stress_inside)
 
-    print(f"For the point {X} [The point is present inside], the stress values are:")
-    print(f"sigma11 = {sigma11}\nsigma22 = {sigma22}\nsigma33 = {sigma33}\nsigma12 = {sigma12}\nsigma13 = {sigma31}\nsigma23 = {sigma23}")
-    print()
+    
+    # print(f"sigma11 = {sigma11}\nsigma22 = {sigma22}\nsigma33 = {sigma33}\nsigma12 = {sigma12}\nsigma13 = {sigma31}\nsigma23 = {sigma23}")
+    # print()
     return [sigma11,sigma22,sigma33,sigma12,sigma31,sigma23]
     #return stress_inside[0][1]
 
@@ -334,15 +334,19 @@ try:
     targets = form_data.get('targets')
     mu = E/(2*(1+nu))
 
-    opData = []
 
+    intStress = calc_interior()
+    opData = []
     for x1,x2,x3 in targets:
         X = [x1, x2, x3]
         
-
         if(x1**2/a**2 + x2**2/b**2 + x3**2/c**2 <= 1):
-            stressArr = calc_interior()
-            
+            stressArr = intStress
+            print(f"For the point {X} [The point is present inside], the stress values are:")
+            print(f"sigma11 = {stressArr[0]}\nsigma22 = {stressArr[1]}\nsigma33 = {stressArr[2]}\nsigma12 = {stressArr[3]}\nsigma13 = {stressArr[4]}\nsigma23 = {stressArr[5]}")
+            print()
+    
+
         else:
             stressArr = calc_exterior(X)
 
