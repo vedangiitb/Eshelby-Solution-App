@@ -309,10 +309,6 @@ function createWindow() {
     }
   });
 
-  win.webContents.on('will-navigate', (event, url) => {
-    event.preventDefault(); // Prevent the default behavior
-    shell.openExternal(url); // Open the URL in the default browser
-  });
   win.maximize();
 
   win.loadURL(`http://localhost:${port}`);

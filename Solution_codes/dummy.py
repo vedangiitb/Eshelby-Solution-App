@@ -12,6 +12,8 @@ def dummy_func(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu):
     return output_data
 
 def plot():
+
+    
     X,Y,Z = np.mgrid[-1:1:50j,-1:1:50j,-1:1:50j]
     sigma_xx = np.random.randn(50,50,50)
     mlab.points3d(X,Y,Z,sigma_xx)
