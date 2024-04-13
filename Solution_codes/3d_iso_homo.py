@@ -1,14 +1,47 @@
-import numpy as np
-import scipy.special as sp
-import sympy as sym
-import scipy.integrate as integrate
-from matplotlib import pyplot as plt
+try:
+    import numpy as np
+    import scipy.special as sp
+    import sympy as sym
+    import scipy.integrate as integrate
+    pi = np.pi
+    import sys
+    import json
+    import pandas as pd
+except Exception as e:
+    print(e)
 
-pi = np.pi
+
+def saveData(points,data):
+    x = []
+    y = []
+    z = []
+
+    for p in points:
+        x.append(p[0])
+        y.append(p[1])
+        z.append(p[2])
+    
+    sigma11 = []
+    sigma12 = []
+    sigma13 = []
+    sigma22 = []
+    sigma23 = []
+    sigma33 = []
+
+    for d in data:
+        sigma11.append(d[0])
+        sigma22.append(d[1])
+        sigma33.append(d[2])
+        sigma12.append(d[3])
+        sigma13.append(d[4])
+        sigma23.append(d[5])
+
+    df = pd.DataFrame(list(zip(x,y,z,sigma11,sigma22,sigma33,sigma12,sigma13,sigma23)),columns=["x","y","z",'sigma11','sigma22','sigma33','sigma12','sigma13','sigma23'])
+
+    df.to_csv('public/temp.csv',index=False)
+
 
 # Function to find Lambda (the largest root)
-
-
 def find_lambda(X, axis):
     ans = sym.symbols('ans')
     eqn = sym.Eq(((X[0])**2)/((axis[0])**2 + ans) + ((X[1])**2)/((axis[1])**2 + ans) + ((X[2])**2)/((axis[2])**2 + ans), 1)
@@ -213,16 +246,21 @@ def calc_interior():
 
     sigma33 = 2*mu*(w1+w2+w3)
 
-    stress_inside = np.array([[sigma11, sigma12, sigma31], [sigma12, sigma22, sigma23], [sigma31, sigma23, sigma33]])
-    print(stress_inside)
+    #stress_inside = np.array([[sigma11, sigma12, sigma31], [sigma12, sigma22, sigma23], [sigma31, sigma23, sigma33]])
+    #print(stress_inside)
+
+    print(f"For the point {X} [The point is present inside], the stress values are:")
+    print(f"sigma11 = {sigma11}\nsigma22 = {sigma22}\nsigma33 = {sigma33}\nsigma12 = {sigma12}\nsigma13 = {sigma31}\nsigma23 = {sigma23}")
+    print()
+    return [sigma11,sigma22,sigma33,sigma12,sigma31,sigma23]
     #return stress_inside[0][1]
 
-def calc_exterior():
+def calc_exterior(X):
     epsilon_star = [[eps11, eps12, 0], [0, eps22, eps23], [eps31, 0, eps33]]
     
     
     lbd = find_lambda(X, axis)
-    print("Lambda is: ", lbd)
+    # print("Lambda is: ", lbd)
 
     #Calculating I, I1, I2, I3, I11, I22, I33, etc
     I = IIJ(axis, lbd, 0, 0)
@@ -267,37 +305,51 @@ def calc_exterior():
     sig12 = (E/(1+nu))*epsilon[0,1]
     sig13 = (E/(1+nu))*epsilon[0,2]
     sig23 = (E/(1+nu))*epsilon[1,2]
-    stress_outside = np.array([[sig11,sig12,sig13],[sig12,sig22,sig23],[sig13,sig23,sig33]])
-    print(stress_outside)
+    #stress_outside = np.array([[sig11,sig12,sig13],[sig12,sig22,sig23],[sig13,sig23,sig33]])
+    #print(stress_outside)
+    print(f"For the point {X} [The point is present outside], the stress values are")
+    print(f"sigma11 = {sig11}\nsigma22 = {sig22}\nsigma33 = {sig33}\nsigma12 = {sig12}\nsigma13 = {sig13}\nsigma23 = {sig23}")
+    print()
+    return [sig11,sig22,sig33,sig12,sig13,sig23]
     #return stress_outside[0][1]
+
+
+try:
+    # Load the form data passed from Express.js
+    form_data = json.loads(sys.argv[1])
+
+    # Taking Inputs
+    a = float(form_data.get('a'))
+    b = float(form_data.get('b'))
+    c = float(form_data.get('c'))
+    axis = [a,b,c]
+    eps11 = float(form_data.get('eps11'))
+    eps22 = float(form_data.get('eps22'))
+    eps33 = float(form_data.get('eps33'))
+    eps12 = float(form_data.get('eps12'))
+    eps23 = float(form_data.get('eps23'))
+    eps31 = float(form_data.get('eps13'))
+    E = float(form_data.get('ep'))
+    nu = float(form_data.get('nu'))
+    targets = form_data.get('targets')
+    mu = E/(2*(1+nu))
+
+    opData = []
+
+    for x1,x2,x3 in targets:
+        X = [x1, x2, x3]
+        
+
+        if(x1**2/a**2 + x2**2/b**2 + x3**2/c**2 <= 1):
+            stressArr = calc_interior()
             
+        else:
+            stressArr = calc_exterior(X)
 
-a = float(input())
-b = float(input())
-c = float(input())
-axis = [a, b, c]
-eps11 = float(input())
-eps22 = float(input())
-eps33 = float(input())
-eps12 = float(input())
-eps23 = float(input())
-eps31 = float(input())
+        opData.append(stressArr)
 
-E = float(input())  # Young's Modulus
-nu = float(input())  # Poisson's Ratio
-mu = E/(2*(1+nu))
+    saveData(targets,opData)
 
-x1 = float(input())
-x2 = float(input())
-x3 = float(input())
-X = [x1, x2, x3]
-
-if(x1**2/a**2 + x2**2/b**2 + x3**2/c**2 <= 1):
-    calc_interior()
-    print("Point is inside")
-else:
-    calc_exterior()
-    print("Point is outside")
-
-
+except Exception as e:
+    print("error:", e)
 

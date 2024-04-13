@@ -144,7 +144,7 @@ appExpress.post('/isohomoinput',validateInput,(req,res)=>{
   console.log(inputData);
 
 
-  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_homogeneous.py', JSON.stringify(inputData)]);
+  const pythonProcess = spawn('python',['./Solution_codes/3d_iso_homo.py', JSON.stringify(inputData)]);
   let output = '';
   let error = '';
   pythonProcess.stdout.on('data', (data) => {
