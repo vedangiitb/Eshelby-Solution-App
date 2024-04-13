@@ -9,20 +9,20 @@ const appExpress = express();
 const port = 3000;
 
 
-const validateInput = (req, res, next) => {
-  const { a, b, c } = req.body;
-  const aValue = parseFloat(a);
-  const bValue = parseFloat(b);
-  const cValue = parseFloat(c);
+// const validateInput = (req, res, next) => {
+//   const {a,b,c} = req.body;
+//   const aValue = parseFloat(a);
+//   const bValue = parseFloat(b);
+//   const cValue = parseFloat(c);
 
-  // if (aValue > bValue && bValue > cValue) {
-  //   next();
-  // } else {
-  //   // alert('Please ensure that a > b > c');
-  //   // return false;
-  //   res.send("Invalid Input");
-  // }
-};
+//   if (aValue > bValue && bValue > cValue) {
+//     next();
+//   } else {
+//     // alert('Please ensure that a > b > c');
+//     // return false;
+//     res.send("Invalid Input");
+//   }
+// };
 appExpress.use(bodyParser.urlencoded({extended:true}));
 
 appExpress.engine('ejs',ejsMate);
@@ -81,7 +81,7 @@ function convertToGPa(value, units) {
   }
 }
 
-appExpress.post('/isohomoinput',validateInput,(req,res)=>{
+appExpress.post('/isohomoinput',(req,res)=>{
 
   // Extract non-dynamic input
   const a = req.body.a;
@@ -169,7 +169,7 @@ appExpress.post('/isohomoinput',validateInput,(req,res)=>{
 
 })
 
-appExpress.post('/isoinhomoinput',validateInput,(req,res)=>{
+appExpress.post('/isoinhomoinput',(req,res)=>{
 
   // Extract non-dynamic input
   const a = req.body.a;
@@ -235,7 +235,7 @@ appExpress.post('/isoinhomoinput',validateInput,(req,res)=>{
   console.log(inputData);
 
 
-  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_inhomogeneous.py', JSON.stringify(inputData)]);
+  const pythonProcess = spawn('python',['./Solution_codes/3D_iso_homo.py', JSON.stringify(inputData)]);
   let output = '';
   let error = '';
   pythonProcess.stdout.on('data', (data) => {
