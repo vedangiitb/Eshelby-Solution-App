@@ -15,11 +15,13 @@ const validateInput = (req, res, next) => {
   const bValue = parseFloat(b);
   const cValue = parseFloat(c);
 
-  if (aValue > bValue && bValue > cValue) {
-    next();
-  } else {
-    res.send("Invalid Input");
-  }
+  // if (aValue > bValue && bValue > cValue) {
+  //   next();
+  // } else {
+  //   // alert('Please ensure that a > b > c');
+  //   // return false;
+  //   res.send("Invalid Input");
+  // }
 };
 appExpress.use(bodyParser.urlencoded({extended:true}));
 
@@ -95,6 +97,8 @@ appExpress.post('/isohomoinput',validateInput,(req,res)=>{
   const ep = req.body.ep;
   const E_units = req.body.E_units;
   const nu = req.body.nu;
+
+  console.log(a,b,c)
 
 
 

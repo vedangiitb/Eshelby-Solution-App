@@ -3,7 +3,7 @@
 
 <h3>Isotropic Homogenous</h3>
 <div style="margin-left: 1.5%;">
-    <form action="\isohomoinput"  method="POST" id="isohomo">
+    <form action="\isohomoinput"  method="POST" id="isohomo" onsubmit="return validateForm()">
 
     <div class="btn-wrapper" style="display: flex; justify-content: flex-end;">
         <button class="btn btn-outline-warning" type="button" onclick="fillDefaultValues()">Fill with default values</button>
@@ -109,6 +109,19 @@
 </div>
   
  <script>
+        function validateForm() {
+            const a = parseFloat(document.getElementById('a').value);
+            const b = parseFloat(document.getElementById('b').value);
+            const c = parseFloat(document.getElementById('c').value);
+
+            if (a > b && b > c) {
+                return true; // Allow form submission
+            }
+
+            alert('Please ensure that a > b > c');
+                return false; // Prevent form submission
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const inputForm = document.getElementById('isohomo');
             const inputFields = document.getElementById('inputFields');
@@ -167,7 +180,7 @@
                 }
                 document.getElementById('dots').textContent = '.'.repeat(dots);
 
-                if (outputIsLoaded) { 
+                if (outputIsLoaded && validateForm()) { 
                     clearInterval(interval);
                     document.getElementById('processingMessage').style.display = 'none';
                 }
