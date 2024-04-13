@@ -7,6 +7,7 @@
         <div style="display: flex; gap: 5px;">
             <button id="plotButton" class="btn btn-outline-light">plot</button>
             <button id="saveButton" class="btn btn-outline-light">Save Data</button>
+            <a id="downloadLink" href="temp.csv" download="data.csv" style="display: none;">Download temp.csv (hidden link)</a>
         </div>
     </div>
     <script>
@@ -27,24 +28,13 @@
         });
     </script>
 
-    <script>
-        document.getElementById('saveButton').addEventListener('click', () => {
-          const dataToSave = document.getElementById('dataDisplay').textContent.trim();
-          downloadData(dataToSave);
-        });
-    
-        function downloadData(data) {
-          const blob = new Blob([data], { type: 'text/plain' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'savedData.txt';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }
-      </script>
+<script>
+    document.getElementById('saveButton').addEventListener('click', () => {
+      const downloadLink = document.getElementById('downloadLink');
+      downloadLink.click();
+    });
+  </script>
+  
 <% } else { %>
     <p>Not able to compute results! Please try again</p>
     <% }%>

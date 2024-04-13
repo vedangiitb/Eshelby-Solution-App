@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain,shell} = require('electron');
+const { app, BrowserWindow, ipcMain} = require('electron');
 const express = require('express');
 const path = require('path');
 const { spawn } = require('child_process');
@@ -43,14 +43,6 @@ appExpress.get('/isohomogen',(req,res)=>{
 
 appExpress.get('/isohetergen',(req,res)=>{
   res.render('InputPages/isohetergen')
-})
-
-appExpress.get('/anisohomogen',(req,res)=>{
-  res.render('InputPages/anisohomogen')
-})
-
-appExpress.get('/anisoheterogen',(req,res)=>{
-  res.render('InputPages/anisoheterogen')
 })
 
 appExpress.get('/learnproblem',(req,res)=>{
