@@ -81,9 +81,12 @@ function convertToGPa(value, units) {
   }
 }
 
+
+
 appExpress.post('/isohomoinput',(req,res)=>{
 
   // Extract non-dynamic input
+
   const a = req.body.a;
   const b = req.body.b;
   const c = req.body.c;
@@ -98,7 +101,7 @@ appExpress.post('/isohomoinput',(req,res)=>{
   const E_units = req.body.E_units;
   const nu = req.body.nu;
 
-  console.log(a,b,c)
+  
 
 
 
@@ -257,7 +260,7 @@ appExpress.post('/isoinhomoinput',(req,res)=>{
 })
 
 appExpress.get('/dummy',(req,res)=>{
-  const pythonProcess = spawn('python',['./Solution_codes/dummy.py','plot']);
+  const pythonProcess = spawn('python',['./Solution_codes/dummy.py',JSON.stringify(inputData)]);
 
   // Handle Python process events
   pythonProcess.stdout.on('data', (data) => {
