@@ -7,6 +7,7 @@
         <div style="display: flex; gap: 5px;">
             <button id="plotButton" class="btn btn-outline-light">plot</button>
             <button id="saveButton" class="btn btn-outline-light">Save Data</button>
+            <div id="processingMessage" style="display: none;">Your plot is being rendered. Please wait<span id="dots"></span></div>
             <a id="downloadLink" href="temp.csv" download="data.csv" style="display: none;">Download temp.csv (hidden link)</a>
         </div>
     </div>
@@ -40,3 +41,29 @@
     <% }%>
 
 
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('plotButton').addEventListener('click', function(event) {
+            document.getElementById('processingMessage').style.display = 'block';
+                countdownDots();
+            });
+        });
+
+        function countdownDots() {
+            let dots = 0;
+            const maxDots = 5;
+            const interval = setInterval(function() {
+                dots++;
+                if (dots > maxDots) {
+                    dots = 0;
+                }
+                document.getElementById('dots').textContent = '.'.repeat(dots);
+
+                if (outputIsLoaded) { 
+                    clearInterval(interval);
+                    document.getElementById('processingMessage').style.display = 'none';
+                }
+            }, 500);
+        }
+</script>
