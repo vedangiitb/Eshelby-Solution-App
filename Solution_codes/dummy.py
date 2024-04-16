@@ -11,12 +11,20 @@ def dummy_func(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu):
     
     return output_data
 
-def plot():
+def stress_point_function(x,y,z):
+    return x**2 + y**2 + z**2
 
+def plot():
+    x = np.linspace(-50,50,50)
+    y = np.linspace(-40,40,40)
+    z = np.linspace(-30,30,30)
+    X, Y, Z = np.meshgrid(x,y,z)
+    # print(X.shape)
+    stress_values = stress_point_function(X, Y, Z)
     
-    X,Y,Z = np.mgrid[-1:1:50j,-1:1:50j,-1:1:50j]
-    sigma_xx = np.random.randn(50,50,50)
-    mlab.points3d(X,Y,Z,sigma_xx)
+    # X,Y,Z = np.mgrid[-1:1:50j,-1:1:50j,-1:1:50j]
+    # sigma_xx = np.random.randn(50,50,50)
+    mlab.points3d(X,Y,Z,stress_values)
     mlab.axes(line_width=1.0)
     mlab.show()
     return 
