@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain} = require('electron');
+const { app, BrowserWindow, ipcMain,shell} = require('electron');
 const express = require('express');
 const path = require('path');
 const { spawn } = require('child_process');
@@ -7,6 +7,7 @@ const ejsMate = require('ejs-mate');
 const bodyParser = require('body-parser');
 const appExpress = express();
 const port = 3000;
+
 
 
 // const validateInput = (req, res, next) => {
@@ -304,6 +305,12 @@ function createWindow() {
       nodeIntegration: true
     }
   });
+
+  win.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url); // Open URL in user's browser.
+    return { action: "deny" }; // Prevent the app from opening the URL.
+  })
+  
 
   win.maximize();
 
