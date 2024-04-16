@@ -315,7 +315,7 @@ intStress = calc_interior()
 
 
 def calcStress(x,y,z):
-    if(x**2/a**2 + y**2/b**2 + z**2/c**2 <= 1):
+    if(x**2/a**2 + y**2/b**2 + z**2/c**2 <= 0):
         return intStress[0]
     else:
         Arr = calc_exterior([x,y,z])
@@ -325,9 +325,9 @@ def calcStress(x,y,z):
 
 step = 2*a/50
 
-x = np.linspace(-a,a,50)
-y = np.linspace(-b,b,int(2*b/step))
-z = np.linspace(-c,c,int(2*c/step))
+x = np.linspace(-a,a,10)
+y = np.linspace(-b,b,10)
+z = np.linspace(-c,c,10)
 B,A, C = np.meshgrid(x,y,z)
 # print(X.shape)
 print("plotting..")
