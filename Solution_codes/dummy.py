@@ -312,7 +312,7 @@ mu = E/(2*(1+nu))
 
 
 intStress = calc_interior()
-
+print(f"intStress:{intStress}")
 
 def calcStress(x,y,z):
     if(x**2/a**2 + y**2/b**2 + z**2/c**2 <= 0):
@@ -323,11 +323,11 @@ def calcStress(x,y,z):
 
 
 
-step = 2*a/50
+step = 4*a/20
 
-x = np.linspace(-a,a,10)
-y = np.linspace(-b,b,10)
-z = np.linspace(-c,c,10)
+x = np.linspace(-a,a,50)
+y = np.linspace(-b,b,int(2*b/step))
+z = np.linspace(-c,c,int(2*c/step))
 B,A, C = np.meshgrid(x,y,z)
 # print(X.shape)
 print("plotting..")
@@ -341,9 +341,12 @@ for i in range(A.shape[0]):
 
 
 
-# X,Y,Z = np.mgrid[-1:1:50j,-1:1:50j,-1:1:50j]
-# sigma_xx = np.random.randn(50,50,50)
-mlab.points3d(A,B,C,stressArr)
+
+plot = mlab.points3d(A,B,C,stressArr,scale_mode='none')
+# adjust scalae_factor through mayavi gui for better visibility
+plot.module_manager.scalar_lut_manager.show_legend = True
+
+
 mlab.axes(line_width=1.0)
 mlab.show()
 print("plotting finished")
