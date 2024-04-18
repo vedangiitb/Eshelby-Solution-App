@@ -325,9 +325,9 @@ def calcStress(x,y,z):
 
 step = 4*a/20
 
-x = np.linspace(-a,a,50)
-y = np.linspace(-b,b,int(2*b/step))
-z = np.linspace(-c,c,int(2*c/step))
+x = np.linspace(-2*a,2*a,20)
+y = np.linspace(-2*b,2*b,int(4*b/step))
+z = np.linspace(-2*c,2*c,int(4*c/step))
 B,A, C = np.meshgrid(x,y,z)
 # print(X.shape)
 print("plotting..")
