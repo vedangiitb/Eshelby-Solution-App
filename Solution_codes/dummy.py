@@ -9,6 +9,7 @@ try:
     import json
     import pandas as pd
     from mayavi import mlab
+    from mayavi.modules.labels import Labels
     
     
 except Exception as e:
@@ -323,9 +324,9 @@ def calcStress(x,y,z):
 
 
 
-step = 4*a/20
+step = 4*a/10
 
-x = np.linspace(-2*a,2*a,20)
+x = np.linspace(-2*a,2*a,10)
 y = np.linspace(-2*b,2*b,int(4*b/step))
 z = np.linspace(-2*c,2*c,int(4*c/step))
 B,A, C = np.meshgrid(x,y,z)
@@ -342,12 +343,29 @@ for i in range(A.shape[0]):
 
 
 
+
+
 plot = mlab.points3d(A,B,C,stressArr,scale_mode='none')
 # adjust scalae_factor through mayavi gui for better visibility
 plot.module_manager.scalar_lut_manager.show_legend = True
+plot.module_manager.scalar_lut_manager.scalar_bar_representation.minimum_size = [2, 2]
+plot.module_manager.scalar_lut_manager.scalar_bar_representation.position = [0.884375  , 0.41530076]
+plot.module_manager.scalar_lut_manager.scalar_bar_representation.position2 = [0.075     , 0.51279791]
 
 
 mlab.axes(line_width=1.0)
+mlab.volume_slice(A,B,C,stressArr,extent=[-2*a,2*a,-2*b,2*b,-2*c,2*c])
+mlab.set_picker_props(figure=None, pick_type='point_picker', tolerance=0.025, text_color=None)
+# mlab.set_picker_props()
+engine = mlab.get_engine()
+scene = engine.scenes[0]
+scene.scene.background = (0.0, 0.0, 0.0)
+
+labels = Labels()
+engine.add_filter(labels,plot.module_manager)
+labels.actor.mapper.label_mode = 'label_field_data'
+
+
 mlab.show()
 print("plotting finished")
 
