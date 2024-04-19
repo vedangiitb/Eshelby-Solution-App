@@ -10,20 +10,19 @@ const port = 3000;
 
 
 
-// const validateInput = (req, res, next) => {
-//   const {a,b,c} = req.body;
-//   const aValue = parseFloat(a);
-//   const bValue = parseFloat(b);
-//   const cValue = parseFloat(c);
+const validateInput = (req, res, next) => {
+  const {a, b, c} = req.body;
+  const aValue = parseFloat(a);
+  const bValue = parseFloat(b);
+  const cValue = parseFloat(c);
 
-//   if (aValue > bValue && bValue > cValue) {
-//     next();
-//   } else {
-//     // alert('Please ensure that a > b > c');
-//     // return false;
-//     res.send("Invalid Input");
-//   }
-// };
+  if (aValue > bValue && bValue > cValue) {
+    next();
+  } else {
+    res.render('invalidinput.ejs')
+  }
+};
+
 appExpress.use(bodyParser.urlencoded({extended:true}));
 
 appExpress.engine('ejs',ejsMate);
@@ -68,6 +67,10 @@ function convertToMM(value, units) {
           return value * 10; 
       case 'm':
           return value * 1000; 
+      case 'um':
+          return value / 1000;
+      case 'nm':
+          return value / 1000000;
       default:
           return value; // No conversion needed for default unit (mm)
   }
@@ -84,7 +87,7 @@ function convertToGPa(value, units) {
 
 
 
-appExpress.post('/isohomoinput',(req,res)=>{
+appExpress.post('/isohomoinput',validateInput,(req,res)=>{
 
   // Extract non-dynamic input
 
@@ -101,10 +104,6 @@ appExpress.post('/isohomoinput',(req,res)=>{
   const ep = req.body.ep;
   const E_units = req.body.E_units;
   const nu = req.body.nu;
-
-  
-
-
 
   // Extract dynamic inputs
 
@@ -173,7 +172,7 @@ appExpress.post('/isohomoinput',(req,res)=>{
 
 })
 
-appExpress.post('/isoinhomoinput',(req,res)=>{
+appExpress.post('/isoinhomoinput',validateInput,(req,res)=>{
 
   // Extract non-dynamic input
   const a = req.body.a;
@@ -190,7 +189,7 @@ appExpress.post('/isoinhomoinput',(req,res)=>{
   const eps = req.body.eps;
   const E_units = req.body.E_units;
   const nu = req.body.nu;
-  const nus = req.bodu.nus;
+  const nus = req.body.nus;
 
   // Extract dynamic inputs
   const inputCount = parseInt(req.body.inputCount);
@@ -239,7 +238,7 @@ appExpress.post('/isoinhomoinput',(req,res)=>{
   console.log(inputData);
 
 
-  const pythonProcess = spawn('python',['./Solution_codes/3D_iso_homo.py', JSON.stringify(inputData)]);
+  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_inhomogeneous.py', JSON.stringify(inputData)]);
   let output = '';
   let error = '';
   pythonProcess.stdout.on('data', (data) => {
@@ -260,7 +259,13 @@ appExpress.post('/isoinhomoinput',(req,res)=>{
 
 })
 
-appExpress.get('/dummy',(req,res)=>{
+appExpress.post('/dummy',(req,res)=>{
+  const plot_label = req.body.plot_label;
+  inputData.plottype = plot_label;
+  console.log("************")
+  console.log(inputData.plottype)
+  console.log(plot_label)
+  console.log("************")
   const pythonProcess = spawn('python',['./Solution_codes/dummy.py',JSON.stringify(inputData)]);
 
   // Handle Python process events

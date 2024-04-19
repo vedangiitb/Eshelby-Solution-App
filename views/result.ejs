@@ -4,29 +4,41 @@
 <% if (output) { %>
     <div >
         <pre id="dataDisplay" style="font-family:Verdana, Geneva, Tahoma, sans-serif; font-size: 16px;"><%= output %></pre>
-        <div style="display: flex; gap: 5px;">
-            <button id="plotButton" class="btn btn-outline-light">plot</button>
+        <div style="display: flex; flex-direction: column; gap: 5px;" class="col-8">
+            <div style="display: flex; gap: 1%;">
+                <button id="plotButton" class="btn btn-outline-light">plot</button>
+                <select name="plot_type" class="form-select" aria-label="plot_label" style="color: white; background-color: #004f8b;">
+                    <option value="11">sigma11</option>
+                    <option value="22">sigma22</option>
+                    <option value="33" selected>sigma33</option>
+                    <option value="12" selected>sigma12</option>
+                    <option value="13" selected>sigma13</option>
+                    <option value="23" selected>sigma33</option>
+                </select>
+               </div>
             <button id="saveButton" class="btn btn-outline-light">Save Data</button>
+            <div id="processingMessage" style="display: none;">Your plot is being rendered. Please wait<span id="dots"></span></div>
             <a id="downloadLink" href="temp.csv" download="data.csv" style="display: none;">Download temp.csv (hidden link)</a>
         </div>
     </div>
-    <script>
-        // Function to send request to trigger plot
-        function triggerPythonFunction() {
-            fetch('http://localhost:3000/dummy')
-                .then(response => response.text())
-                .then(message => {
-                    console.log(message);
-                    // Display a message or perform other actions if needed
-                })
-                .catch(error => console.error('Error:', error));
-        }
 
-        // Add click event listener to the button
-        document.getElementById('plotButton').addEventListener('click', function() {
-            triggerPythonFunction();
-        });
-    </script>
+<script>
+    // Function to send request to trigger plot
+    function triggerPythonFunction() {
+        fetch('http://localhost:3000/dummy')
+            .then(response => response.text())
+            .then(message => {
+                console.log(message);
+                // Display a message or perform other actions if needed
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Add click event listener to the button
+    document.getElementById('plotButton').addEventListener('click', function() {
+        triggerPythonFunction();
+    });
+</script>
 
 <script>
     document.getElementById('saveButton').addEventListener('click', () => {
@@ -40,3 +52,29 @@
     <% }%>
 
 
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('plotButton').addEventListener('click', function(event) {
+            document.getElementById('processingMessage').style.display = 'block';
+                countdownDots();
+            });
+        });
+
+        function countdownDots() {
+            let dots = 0;
+            const maxDots = 5;
+            const interval = setInterval(function() {
+                dots++;
+                if (dots > maxDots) {
+                    dots = 0;
+                }
+                document.getElementById('dots').textContent = '.'.repeat(dots);
+
+                if (outputIsLoaded) { 
+                    clearInterval(interval);
+                    document.getElementById('processingMessage').style.display = 'none';
+                }
+            }, 500);
+        }
+</script>

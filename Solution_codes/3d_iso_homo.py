@@ -337,6 +337,12 @@ try:
 
     intStress = calc_interior()
     opData = []
+
+    if len(targets)==0:
+        print("The stress values for all the interior points are:")
+        stressArr = intStress
+        print(f"sigma11 = {stressArr[0]}\nsigma22 = {stressArr[1]}\nsigma33 = {stressArr[2]}\nsigma12 = {stressArr[3]}\nsigma13 = {stressArr[4]}\nsigma23 = {stressArr[5]}")
+
     for x1,x2,x3 in targets:
         X = [x1, x2, x3]
         
