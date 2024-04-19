@@ -6,11 +6,47 @@ try:
     pi = np.pi
     import sys
     import json
+    import pandas as pd
 except Exception as e:
     print(e)
 
-# Function to find Lambda (the largest root)
 
+def saveData(points,data):
+    x = []
+    y = []
+    z = []
+
+    for p in points:
+        x.append(p[0])
+        y.append(p[1])
+        z.append(p[2])
+    
+    sigma11 = []
+    sigma12 = []
+    sigma13 = []
+    sigma21 = []
+    sigma22 = []
+    sigma23 = []
+    sigma31 = []
+    sigma32 = []
+    sigma33 = []
+
+    for d in data:
+        sigma11.append(d[0])
+        sigma12.append(d[1])
+        sigma13.append(d[2])
+        sigma21.append(d[3])
+        sigma22.append(d[4])
+        sigma23.append(d[5])
+        sigma31.append(d[6])
+        sigma32.append(d[7])
+        sigma33.append(d[8])
+
+    df = pd.DataFrame(list(zip(x,y,z,sigma11,sigma12,sigma13,sigma21,sigma22,sigma23,sigma31,sigma32,sigma33)),columns=["x","y","z",'sigma11','sigma12','sigma13','sigma21','sigma22','sigma23','sigma31','sigma32','sigma33'])
+
+    df.to_csv('public/temp.csv',index=False)
+
+# Function to find Lambda (the largest root)
 def find_lambda(X, axis):
     ans = sym.symbols('ans')
     eqn = sym.Eq(((X[0])**2)/((axis[0])**2 + ans) + ((X[1])**2)/((axis[1])**2 + ans) + ((X[2])**2)/((axis[2])**2 + ans), 1)
@@ -169,154 +205,110 @@ try:
     axis = [a, b, c]
 
 
-    eps_0_11 = 0
-    eps_0_22 = 0
-    eps_0_33 = 0
-    eps_0_12 = 0
-    eps_0_23 = 0
-    eps_0_31 = 0
-# '''
-#     #Calculating theta and K
+    if len(targets)==0:
+        print("No points entered! Please enter the points where you want to compute the results")
 
-#     theta = np.arcsin(np.sqrt((a**2 - c**2)/a**2))
-#     k = np.sqrt((a**2 - b**2)/(a**2 - c**2))
+    opData = []
 
-#     F = sp.ellipkinc(theta, k**2)
-#     E = sp.ellipeinc(theta, k**2)
-#     I1 = (4*pi*a*b*c)*(F - E) / ((a**2 - b**2)*np.sqrt(a**2 - c**2))
-#     I3 = (4*pi*a*b*c)*((b*np.sqrt(a**2-c**2))/(a*c) - E)
-#     I2 = 4*pi - I1 - I3
+    for x1,x2,x3 in targets:
+        eps_0_11 = 0
+        eps_0_22 = 0
+        eps_0_33 = 0
+        eps_0_12 = 0
+        eps_0_23 = 0
+        eps_0_31 = 0
 
+        # CODE FOR OUTSIDE PART (MATRIX)
 
-#     #Solvig equations for I11 and I13
-#     I12 = (I2-I1)/(a**2-b**2)
-#     x, y = sym.symbols('x y')
-#     eq1 = sym.Eq(3*x+I12+y, 4*pi/(a**2))
-#     eq2 = sym.Eq(3*(a**2)*x+(b**2)*I12+(c**2)*y, 3*I1)
-#     ans = sym.solve([eq1, eq2], (x, y))
-#     I11 = ans[x]
-#     I13 = ans[y]
+        epsilon_p = [[eps_p_11, eps_p_12, eps_p_31], [eps_p_12, eps_p_22, eps_p_23], [eps_p_31, eps_p_23, eps_p_33]]
+        epsilon_not = [[eps_0_11, eps_0_12, eps_0_31], [eps_0_12, eps_0_22, eps_0_23], [eps_0_31, eps_0_23, eps_0_33]]
 
-#     #Solving equations for I21 and I22
-#     I23 = (I3-I2)/(b**2-c**2)
-#     x, y = sym.symbols('x y')
-#     eq1 = sym.Eq(3*x+I23+y, 4*pi/(b**2))
-#     eq2 = sym.Eq(3*(b**2)*x+(c**2)*I23+(a**2)*y, 3*I2)
-#     ans = sym.solve([eq1, eq2], (x, y))
-#     I21 = ans[y]
-#     I22 = ans[x]
+        X = [x1, x2, x3]  # Any Point
+        lbd = find_lambda(X, axis)
 
-#     #Solving equation for I33 and I32
-#     I31 = (I1-I3)/(c**2-a**2)
-#     x, y = sym.symbols('x y')
-#     eq1 = sym.Eq(3*x+I31+y, 4*pi/(c**2))
-#     eq2 = sym.Eq(3*(c**2)*x+(a**2)*I31+(b**2)*y, 3*I3)
-#     ans = sym.solve([eq1, eq2], (x, y))
-#     I32 = ans[y]
-#     I33 = ans[x]
-#     #Solving for sigma
+        #Calculating I, I1, I2, I3, I11, I22, I33, etc
 
-#     #t1 t2 t3 are terms of sigma11
-#     t1 = (((a**2)*(3*I11 - 3*nu*I11 + nu*I21 + nu*I31))/(8*pi*(1-nu)*(1-2*nu)) + ((I1 - (nu/(1-nu))*(I2+I3))/(8*pi)) - ((1-nu)/(1-2*nu)))*eps_p_11
+        I = IIJ(axis, lbd, 0, 0)
+        Ii = [0, 0, 0]
+        for i in range(3):
+            Ii[i] = IIJ(axis, lbd, i, 0)
+        Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        for i in range(3):
+            for j in range(3):
+                Iij[i][j] = IIJ(axis, lbd, i, j)
 
-#     t2 = (((b**2)*(I12-I12*nu + 3*nu*I22 + nu*I32))/(8*pi*(1-nu)*(1-2*nu)) - (I1 - (nu/1-nu)*(I2-I3))/(8*pi) - (nu)/(1-2*nu))*eps_p_22
+        Sijkl = get_Sijkl(axis, I, Ii, Iij)
 
-#     t3 = (((c**2)*(I3 - nu*I3 + 3*nu*I33 + nu*I23))/(8*pi*(1-nu)*(1-2*nu)) - (I1 - (nu/1-nu)*(I3-I2))/(8*pi) - (nu)/(1-2*nu))*eps_p_33
+        eps_star_star_12 = ( 2*(mu-mu_star)*(epsilon_not[0][1]) + 2*mu_star*epsilon_p[0][1] ) / ( 4*(mu-mu_star)*Sijkl[0][1][0][1] + 2*mu )
+        eps_star_star_23 = ( 2*(mu-mu_star)*(epsilon_not[1][2]) + 2*mu_star*epsilon_p[1][2] ) / ( 4*(mu-mu_star)*Sijkl[1][2][1][2] + 2*mu )
+        eps_star_star_31 = ( 2*(mu-mu_star)*(epsilon_not[2][0]) + 2*mu_star*epsilon_p[2][0] ) / ( 4*(mu-mu_star)*Sijkl[2][0][2][0] + 2*mu )
 
-#     sigma11 = 2*mu*(t1+t2+t3)
+        epsilon_star_star = [[0, eps_star_star_12, eps_star_star_31], [eps_star_star_12, 0, eps_star_star_23], [eps_star_star_31, eps_star_star_23, 0]]
 
-#     sigma12 = ((((a**2+b**2)*I12 + (1-2*nu)*(I1+I2))/(8*pi*(1-nu)))-1)*eps_p_12*2*mu
-#     sigma23 = ((((b**2+c**2)*I12 + (1-2*nu)*(I2+I3))/(8*pi*(1-nu)))-1)*eps_p_23*2*mu
-#     sigma31 = ((((a**2+c**2)*I12 + (1-2*nu)*(I1+I3))/(8*pi*(1-nu)))-1)*eps_p_31*2*mu
+        # SOLVING FOR epsilon star_star 11,22,33
+
+        K = E/(3*(1-2*nu))
+        K_star = E_star/(3*(1-2*nu_star))
+        t = K_star/K
+
+        A = [ [(1-t)*Sijkl[0][0][0][0]-1, (1-t)*Sijkl[0][0][1][1], (1-t)*Sijkl[0][0][2][2]], [(1-t)*Sijkl[1][1][0][0], (1-t)*Sijkl[1][1][1][1]-1, (1-t)*Sijkl[1][1][2][2]], [(1-t)*Sijkl[2][2][0][0], (1-t)*Sijkl[2][2][1][1], (1-t)*Sijkl[2][2][2][2]-1]]
+
+        zz1, zz2, zz3 = 0, 0, 0
+
+        for m in range(3):
+            for n in range(3):
+                if m != n:
+                    zz1 = zz1 + Sijkl[0][0][m][n] * epsilon_star_star[m][n]
+                    zz2 = zz2 + Sijkl[1][1][m][n] * epsilon_star_star[m][n]
+                    zz3 = zz3 + Sijkl[2][2][m][n] * epsilon_star_star[m][n]
 
 
-#     #q1 q2 q3 are for sigma22
-#     q1 = (((b**2)*(3*I22 - 3*nu*I22 + nu*I32 + nu*I12))/(8*pi*(1-nu)*(1-2*nu)) + ((I2 - (nu/(1-nu))*(I1+I3))/(8*pi)) - ((1-nu)/(1-2*nu)))*eps_p_22
-#     q2 = (((c**2)*(I23-I23*nu + 3*nu*I33 + nu*I13))/(8*pi*(1-nu)*(1-2*nu)) - (I2 - (nu/1-nu)*(I3-I1))/(8*pi) - (nu)/(1-2*nu))*eps_p_33
-#     q3 = (((a**2)*(I21 - nu*I21 + 3*nu*I11 + nu*I31))/(8*pi*(1-nu)*(1-2*nu)) - (I2 - (nu/1-nu)*(I1-I3))/(8*pi) - (nu)/(1-2*nu))*eps_p_11
+        B = [[(t-1)*epsilon_not[0][0] - t*epsilon_p[0][0] - (1-t)*zz1], [(t-1)*epsilon_not[1][1] - t*epsilon_p[1][1] - (1-t)*zz2], [(t-1)*epsilon_not[2][2] - t*epsilon_p[2][2] - (1-t)*zz3]]
 
-#     sigma22 = 2*mu*(q1+q2+q3)
+        A_inv = (np.linalg.inv(A))
+        epsilon_star_11_22_33 = np.dot(A_inv, B)
 
+        epsilon_star_star[0][0] = epsilon_p[0][0] + epsilon_star_11_22_33[0]
+        epsilon_star_star[1][1] = epsilon_p[1][1] + epsilon_star_11_22_33[1]
+        epsilon_star_star[2][2] = epsilon_p[2][2] + epsilon_star_11_22_33[2]
 
-#     #w1 w2 w3 are for sigma33
-#     w1 = (((c**2)*(3*I33 - 3*nu*I33 + nu*I13 + nu*I23))/(8*pi*(1-nu)*(1-2*nu)) + ((I3 - (nu/(1-nu))*(I2+I1))/(8*pi)) - ((1-nu)/(1-2*nu)))*eps_p_33
-#     w2 = (((a**2)*(I31-I31*nu + 3*nu*I11 + nu*I21))/(8*pi*(1-nu)*(1-2*nu)) - (I3 - (nu/1-nu)*(I1-I2))/(8*pi) - (nu)/(1-2*nu))*eps_p_11
-#     w3 = (((b**2)*(I32 - nu*I32 + 3*nu*I22 + nu*I12))/(8*pi*(1-nu)*(1-2*nu)) - (I3 - (nu/1-nu)*(I2-I1))/(8*pi) - (nu)/(1-2*nu))*eps_p_22
+        epsilon = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
 
-#     sigma33 = 2*mu*(w1+w2+w3)
+        for k in range(3):
+            for l in range(3):
+                for m in range(3):
+                    for n in range(3):
+                        epsilon[k][l] = Sijkl[k][l][m][n] * epsilon_star_star[m][n]
 
-#     print("Inside inclusion:\n" + [sigma11,sigma12,sigma22,sigma23,sigma31,sigma33] + "\n")
-# '''
-    # CODE FOR OUTSIDE PART (MATRIX)
+        sigmaij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        deltaij = np.identity(3)
+        epsilon_kk = epsilon[0][0] + epsilon[1][1] + epsilon[2][2]
 
-    epsilon_p = [[eps_p_11, eps_p_12, eps_p_31], [eps_p_12, eps_p_22, eps_p_23], [eps_p_31, eps_p_23, eps_p_33]]
-    epsilon_not = [[eps_0_11, eps_0_12, eps_0_31], [eps_0_12, eps_0_22, eps_0_23], [eps_0_31, eps_0_23, eps_0_33]]
+        for i in range(3):
+            for j in range(3):
+                sigmaij[i][j] = (E * nu * deltaij[i][j] * epsilon_kk) / ((1+nu) * (1-2*nu)) + (E * epsilon[i][j]) / (1+nu)
 
-    X = [7, 7, 7]  # Any Point
-    lbd = find_lambda(X, axis)
-    print("Lambda is: ", lbd)
-
-    #Calculating I, I1, I2, I3, I11, I22, I33, etc
-
-    I = IIJ(axis, lbd, 0, 0)
-    Ii = [0, 0, 0]
-    for i in range(3):
-        Ii[i] = IIJ(axis, lbd, i, 0)
-    Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    for i in range(3):
-        for j in range(3):
-            Iij[i][j] = IIJ(axis, lbd, i, j)
-
-    Sijkl = get_Sijkl(axis, I, Ii, Iij)
-
-    eps_star_star_12 = ( 2*(mu-mu_star)*(epsilon_not[0][1]) + 2*mu_star*epsilon_p[0][1] ) / ( 4*(mu-mu_star)*Sijkl[0][1][0][1] + 2*mu )
-    eps_star_star_23 = ( 2*(mu-mu_star)*(epsilon_not[1][2]) + 2*mu_star*epsilon_p[1][2] ) / ( 4*(mu-mu_star)*Sijkl[1][2][1][2] + 2*mu )
-    eps_star_star_31 = ( 2*(mu-mu_star)*(epsilon_not[2][0]) + 2*mu_star*epsilon_p[2][0] ) / ( 4*(mu-mu_star)*Sijkl[2][0][2][0] + 2*mu )
-
-    epsilon_star_star = [[0, eps_star_star_12, eps_star_star_31], [eps_star_star_12, 0, eps_star_star_23], [eps_star_star_31, eps_star_star_23, 0]]
-
-    # SOLVING FOR epsilon star_star 11,22,33
-
-    K = E/(3*(1-2*nu))
-    K_star = E_star/(3*(1-2*nu_star))
-    t = K_star/K
-
-    A = [ [(1-t)*Sijkl[0][0][0][0]-1, (1-t)*Sijkl[0][0][1][1], (1-t)*Sijkl[0][0][2][2]], [(1-t)*Sijkl[1][1][0][0], (1-t)*Sijkl[1][1][1][1]-1, (1-t)*Sijkl[1][1][2][2]], [(1-t)*Sijkl[2][2][0][0], (1-t)*Sijkl[2][2][1][1], (1-t)*Sijkl[2][2][2][2]-1]]
-
-    zz1, zz2, zz3 = 0, 0, 0
-
-    for m in range(3):
-        for n in range(3):
-            if m != n:
-                zz1 = zz1 + Sijkl[0][0][m][n] * epsilon_star_star[m][n]
-                zz2 = zz2 + Sijkl[1][1][m][n] * epsilon_star_star[m][n]
-                zz3 = zz3 + Sijkl[2][2][m][n] * epsilon_star_star[m][n]
-
-
-    B = [[(t-1)*epsilon_not[0][0] - t*epsilon_p[0][0] - (1-t)*zz1], [(t-1)*epsilon_not[1][1] - t*epsilon_p[1][1] - (1-t)*zz2], [(t-1)*epsilon_not[2][2] - t*epsilon_p[2][2] - (1-t)*zz3]]
-
-    A_inv = (np.linalg.inv(A))
-    epsilon_star_11_22_33 = np.dot(A_inv, B)
-
-    epsilon_star_star[0][0] = epsilon_p[0][0] + epsilon_star_11_22_33[0]
-    epsilon_star_star[1][1] = epsilon_p[1][1] + epsilon_star_11_22_33[1]
-    epsilon_star_star[2][2] = epsilon_p[2][2] + epsilon_star_11_22_33[2]
-
-    epsilon = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-
-    for k in range(3):
-        for l in range(3):
-            for m in range(3):
-                for n in range(3):
-                    epsilon[k][l] = Sijkl[k][l][m][n] * epsilon_star_star[m][n]
-
-    sigmaij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    deltaij = np.identity(3)
-    epsilon_kk = epsilon[0][0] + epsilon[1][1] + epsilon[2][2]
-
-    for i in range(3):
-        for j in range(3):
-            sigmaij[i][j] = (E * nu * deltaij[i][j] * epsilon_kk) / ((1+nu) * (1-2*nu)) + (E * epsilon[i][j]) / (1+nu)
+        
+        isInside = False
+        print(f"For the points {x1,x2,x3}",end=" ")
+        if(x1**2/a**2 + x2**2/b**2 + x3**2/c**2 <= 1):
+            print("[the point is inside]")
+        else:
+            print("[the point is outside]")
+        sigma11 =sigmaij[0][0][0]
+        sigma12 =sigmaij[0][1][0]
+        sigma13 =sigmaij[0][2][0]
+        sigma21 =sigmaij[1][0][0]
+        sigma22 =sigmaij[1][1][0]
+        sigma23 =sigmaij[1][2][0]
+        sigma31 =sigmaij[2][0][0]
+        sigma32 =sigmaij[2][1][0]
+        sigma33 =sigmaij[2][2][0]
+        data = [sigma11,sigma12,sigma13,sigma21,sigma22,sigma23,sigma31,sigma32,sigma33]
+        opData.append(data)
+        print(f"sigma11 = {sigma11}\nsigma12 = {sigma12}\nsigma13 = {sigma13}\nsigma21 = {sigma21}\nsigma22 = {sigma22}\nsigma23 = {sigma23}\nsigma31 = {sigma31}\nsigma32 = {sigma32}\nsigma33 = {sigma33}")
+        print()
+    saveData(targets,opData)
 
 except Exception as e:
     print("error:", e)

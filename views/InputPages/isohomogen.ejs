@@ -13,9 +13,11 @@
     <div style="display: flex; gap: 10px;">
     <p>Add the material dimensions</p>
     <select name="length_units" class="form-select" aria-label="length-units" style="width: 9%; height: 28px; font-size: 14px; padding: 0.5%;padding-top: 0.3%; color: white; background-color: #004f8b;">
-        <option value="default" selected>mm</option>
         <option value="cm">cm</option>
         <option value="m">m</option>
+        <option value="default" selected>mm</option>
+        <option value="nm" selected>nm</option>
+        <option value="um" selected>um</option>
     </select>
     </div>
 
@@ -109,19 +111,6 @@
 </div>
   
  <script>
-        function validateForm() {
-            const a = parseFloat(document.getElementById('a').value);
-            const b = parseFloat(document.getElementById('b').value);
-            const c = parseFloat(document.getElementById('c').value);
-
-            if (a < b || b < c) {
-                alert('Please ensure that a > b > c');
-                return false; // Prevent form submission
-            }
-
-            return true; // Allow form submission
-        }
-
         document.addEventListener('DOMContentLoaded', function () {
             const inputForm = document.getElementById('isohomo');
             const inputFields = document.getElementById('inputFields');

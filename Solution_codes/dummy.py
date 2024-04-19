@@ -308,24 +308,36 @@ eps31 = float(form_data.get('eps13'))
 E = float(form_data.get('ep'))
 nu = float(form_data.get('nu'))
 targets = form_data.get('targets')
+plottype = form_data.get('plottype')
 mu = E/(2*(1+nu))
 
+chosenDir = 0
+if plottype == "22":
+    chosenDir = 1
+elif plottype=="33":
+    chosenDir = 2
+elif plottype=="12":
+    chosenDir = 3
+elif plottype=="13":
+    chosenDir = 4
+else:
+    chosenDir = 5
 
 intStress = calc_interior()
 print(f"intStress:{intStress}")
 
-def calcStress(x,y,z):
+def calcStress(x,y,z,direction):
     if(x**2/a**2 + y**2/b**2 + z**2/c**2 <= 0):
-        return intStress[0]
+        return intStress[direction]
     else:
         Arr = calc_exterior([x,y,z])
-        return Arr[0]
+        return Arr[direction]
 
 
 
-step = 4*a/20
+step = 4*a/13
 
-x = np.linspace(-2*a,2*a,20)
+x = np.linspace(-2*a,2*a,13)
 y = np.linspace(-2*b,2*b,int(4*b/step))
 z = np.linspace(-2*c,2*c,int(4*c/step))
 B,A, C = np.meshgrid(x,y,z)
@@ -336,7 +348,7 @@ stressArr = np.zeros(B.shape)
 for i in range(A.shape[0]):
     for j in range(A.shape[1]):
         for k in range(A.shape[2]):
-            stressArr[i][j][k] = calcStress(A[i][j][k],B[i][j][k],C[i][j][k])
+            stressArr[i][j][k] = calcStress(A[i][j][k],B[i][j][k],C[i][j][k],chosenDir)
             print(A[i][j][k],B[i][j][k],C[i][j][k])
 
 
