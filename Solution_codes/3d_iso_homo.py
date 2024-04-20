@@ -56,22 +56,30 @@ def find_lambda(X, axis):
 
 
 def IIJ(axis, L, i, j):
-    if i==0 and j==0:
+    if i==1 and j==1:
         def v(s):
             deltaS = 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s)))
             return deltaS
         ans = integrate.quad(v, L, np.inf)[0]
         return ans*2*pi*axis[0]*axis[1]*axis[2]
-    elif j==0:
-        def v(s):
-            return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i-1]**2 + s))
-        ans = integrate.quad(v, L, np.inf) [0]
-        return ans*2*pi*axis[0]*axis[1]*axis[2]
+    elif i==2 and j ==2:
+        arr = np.zeros(3)
+        for i in range(3):
+            def v(s):
+                return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i]**2 + s))
+            ans = integrate.quad(v, L, np.inf) [0]
+            arr[i] = ans*2*pi*axis[0]*axis[1]*axis[2]
+        return arr
+        
     else:
-        def v(s):
-            return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i-1]**2 + s)*(axis[j-1]**2 + s))
-        ans = integrate.quad(v, L, np.inf) [0]
-        return ans*2*pi*axis[0]*axis[1]*axis[2]
+        arr = np.zeros((3,3))
+        for i in range(3):
+            for j in range(3):
+                def integrand(s):
+                    return (1/(np.sqrt((axis[0]**2 + s)*(axis[1]**2 + s)*(axis[2]**2 + s))*(axis[i]**2 + s)*(axis[j]**2 + s)))
+                inte = integrate.quad(integrand, L, np.inf)[0]
+                arr[i,j] = inte*np.pi*2*axis[0]*axis[1]*axis[2]
+        return arr
 
 
 def get_Sijkl(axis, I, Ii, Iij):
@@ -262,15 +270,10 @@ def calc_exterior(X):
     lbd = find_lambda(X, axis)
     # print("Lambda is: ", lbd)
 
-    #Calculating I, I1, I2, I3, I11, I22, I33, etc
-    I = IIJ(axis, lbd, 0, 0)
-    Ii = [0, 0, 0]
-    for i in range(3):
-        Ii[i] = IIJ(axis, lbd, i+1, 0)
-    Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    for i in range(3):
-        for j in range(3):
-            Iij[i][j] = IIJ(axis, lbd, i+1, j+1)
+    I = IIJ(axis, lbd, 1, 1)
+    Ii = IIJ(axis, lbd, 2, 2)
+    Iij = IIJ(axis, lbd, 3, 3)
+    
     
 
     Sijkl = get_Sijkl(axis, I, Ii, Iij)
@@ -362,4 +365,3 @@ try:
 
 except Exception as e:
     print("error:", e)
-
