@@ -99,7 +99,7 @@ def lamb_der(x, a, lambda_):
     #Check if x in inside
     if (x[0]**2/(a[0]**2)) + (x[1]**2/(a[1]**2)) + (x[2]**2/(a[2]**2)) <= 1:
         return [0,0,0]
-    denom = (x[0]**2/(a[0]**2 + lambda_)) + (x[1]**2/(a[1]**2 + lambda_)) + (x[2]**2/(a[2]**2 + lambda_))
+    denom = (x[0]**2/((a[0]**2 + lambda_)**2)) + (x[1]**2/((a[1]**2 + lambda_)**2)) + (x[2]**2/((a[2]**2 + lambda_)**2))
     for i in range(3):
         num = (2*x[i])/(a[i]**2 + lambda_)
         arr.append(num/denom)
@@ -111,7 +111,7 @@ def lamb_der2(x,a,lambda_,lambda_der):
     #Check if x in inside
     if (x[0]**2/(a[0]**2)) + (x[1]**2/(a[1]**2)) + (x[2]**2/(a[2]**2)) <= 1:
         return arr
-    denom = (x[0]**2/(a[0]**2 + lambda_)) + (x[1]**2/(a[1]**2 + lambda_)) + (x[2]**2/(a[2]**2 + lambda_))
+    denom = (x[0]**2/((a[0]**2 + lambda_)**2)) + (x[1]**2/((a[1]**2 + lambda_)**2)) + (x[2]**2/((a[2]**2 + lambda_)**2))
     for i in range(3):
         for j in range(3):
             num = 2*denom*lambda_der[i]*lambda_der[j] - 2*(x[i])*lambda_der[j]/(a[i]**2 + lambda_) - 2*(x[j])*lambda_der[i]/(a[j]**2 + lambda_)
