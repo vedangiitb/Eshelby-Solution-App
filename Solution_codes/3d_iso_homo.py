@@ -106,18 +106,14 @@ def lamb_der(x, a, lambda_):
     return arr
 
 # Compute double derivative matrix of lambda
-def lamb_der2(x,a,lambda_,lambda_der):
-    arr = np.zeros((3,3))
-    #Check if x in inside
+def lamb_der2(x, a, lambda_, lambda_der):
+    arr = np.zeros((3, 3))
     if (x[0]**2/(a[0]**2)) + (x[1]**2/(a[1]**2)) + (x[2]**2/(a[2]**2)) <= 1:
         return arr
-    denom = (x[0]**2/((a[0]**2 + lambda_)**2)) + (x[1]**2/((a[1]**2 + lambda_)**2)) + (x[2]**2/((a[2]**2 + lambda_)**2))
     for i in range(3):
         for j in range(3):
-            num = 2*denom*lambda_der[i]*lambda_der[j] - 2*(x[i])*lambda_der[j]/(a[i]**2 + lambda_) - 2*(x[j])*lambda_der[i]/(a[j]**2 + lambda_)
-            arr[i,j] = num/denom
+            arr[i, j] = ((2*a[i]*lambda_der[i]*lambda_der[j]) - 2*lambda_der[j]*(a[i]**2 + lambda_))/((a[i]**2+lambda_)*a[i])
     return arr
-
 
 #Compute derivative of Ii wrt to j direction
 def Ii_j_(a,lambda_,lambda_der):
