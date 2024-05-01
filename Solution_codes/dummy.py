@@ -344,6 +344,9 @@ print(form_data)
 
 chosenDir = 0
 
+# print("**********************************")
+# print(form_data)
+# print("**********************************")
 if plottype == "22":
     chosenDir = 1
 elif plottype=="33":
