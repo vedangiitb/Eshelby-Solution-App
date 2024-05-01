@@ -59,7 +59,7 @@ appExpress.get('/settings',(req,res)=>{
   res.render('settings')
 })
 
-let inputData = {};
+var inputData = {};
 
 function convertToMM(value, units) {
   switch (units) {
@@ -259,8 +259,10 @@ appExpress.post('/isoinhomoinput',validateInput,(req,res)=>{
 
 })
 
-appExpress.get('/dummy',(req,res)=>{
-  inputData.plottype = req.body.plot_label;
+appExpress.post('/dummy',(req,res)=>{
+  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+  console.log(req.body);
+  inputData.plottype = req.body.plot_type;
   const pythonProcess = spawn('python',['./Solution_codes/dummy.py',JSON.stringify(inputData)]);
 
   // Handle Python process events
