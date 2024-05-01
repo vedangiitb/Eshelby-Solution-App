@@ -408,11 +408,11 @@ mlab.pipeline.image_plane_widget(src)
 
 # plot = mlab.points3d(A,B,C,stressArr,scale_mode='none')
 # adjust scalae_factor through mayavi gui for better visibility
-mlab.colorbar(plot)
-# plot.module_manager.scalar_lut_manager.show_legend = True
-# plot.module_manager.scalar_lut_manager.scalar_bar_representation.minimum_size = [2, 2]
-# plot.module_manager.scalar_lut_manager.scalar_bar_representation.position = [0.884375  , 0.41530076]
-# plot.module_manager.scalar_lut_manager.scalar_bar_representation.position2 = [0.075     , 0.51279791]
+# mlab.colorbar(plot)
+plot.module_manager.scalar_lut_manager.show_legend = True
+plot.module_manager.scalar_lut_manager.scalar_bar_representation.minimum_size = [2, 2]
+plot.module_manager.scalar_lut_manager.scalar_bar_representation.position = [0.884375  , 0.41530076]
+plot.module_manager.scalar_lut_manager.scalar_bar_representation.position2 = [0.075     , 0.51279791]
 
 
 mlab.axes(line_width=1.0)
