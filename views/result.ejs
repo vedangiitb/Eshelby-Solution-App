@@ -2,18 +2,19 @@
 
 <h3>Results</h3>
 <% if (output) { %>
+    <form action="\dummy" method="POST" id="plotForm">
     <div >
         <pre id="dataDisplay" style="font-family:Verdana, Geneva, Tahoma, sans-serif; font-size: 16px;"><%= output %></pre>
         <div style="display: flex; flex-direction: column; gap: 5px;" class="col-8">
             <div style="display: flex; gap: 1%;">
-                <button id="plotButton" class="btn btn-outline-light">plot</button>
+                <button id="plotButton" class="btn btn-outline-light" type="submit">plot</button>
                 <select name="plot_type" class="form-select" aria-label="plot_label" style="color: white; background-color: #004f8b;">
-                    <option value="11">sigma11</option>
+                    <option value="11" selected>sigma11</option>
                     <option value="22">sigma22</option>
-                    <option value="33" selected>sigma33</option>
-                    <option value="12" selected>sigma12</option>
-                    <option value="13" selected>sigma13</option>
-                    <option value="23" selected>sigma33</option>
+                    <option value="33" >sigma33</option>
+                    <option value="12" >sigma12</option>
+                    <option value="13">sigma13</option>
+                    <option value="23" >sigma33</option>
                 </select>
                </div>
             <button id="saveButton" class="btn btn-outline-light">Save Data</button>
@@ -22,22 +23,10 @@
         </div>
     </div>
 
-<script>
-    // Function to send request to trigger plot
-    function triggerPythonFunction() {
-        fetch('http://localhost:3000/dummy')
-            .then(response => response.text())
-            .then(message => {
-                console.log(message);
-                // Display a message or perform other actions if needed
-            })
-            .catch(error => console.error('Error:', error));
-    }
+</form>
 
-    // Add click event listener to the button
-    document.getElementById('plotButton').addEventListener('click', function() {
-        triggerPythonFunction();
-    });
+<script>
+    
 </script>
 
 <script>
