@@ -238,7 +238,7 @@ appExpress.post('/isoinhomoinput',validateInput,(req,res)=>{
   console.log(inputData);
 
 
-  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_inhomogeneous_script.py', JSON.stringify(inputData)]);
+  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_inhomogeneous_script_final.py', JSON.stringify(inputData)]);
   let output = '';
   let error = '';
   pythonProcess.stdout.on('data', (data) => {
