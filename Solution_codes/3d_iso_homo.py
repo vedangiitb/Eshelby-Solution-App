@@ -55,34 +55,41 @@ def find_lambda(X, axis):
     return LAMBDA
 
 
-def IIJ(axis, L, i, j):
-    if i==1 and j==1:
-        def v(s):
-            deltaS = 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s)))
-            return deltaS
-        ans = integrate.quad(v, L, np.inf)[0]
-        return ans*2*pi*axis[0]*axis[1]*axis[2]
-    elif i==2 and j ==2:
-        arr = np.zeros(3)
-        for i in range(3):
-            def v(s):
-                return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i]**2 + s))
-            ans = integrate.quad(v, L, np.inf) [0]
-            arr[i] = ans*2*pi*axis[0]*axis[1]*axis[2]
+
+def IIJ(axis, L, flag):
+
+    theta = np.arcsin(np.sqrt((axis[0] ** 2 - axis[2] ** 2) / (axis[0] ** 2 + L)))
+    k = np.sqrt((axis[0] ** 2 - axis[1] ** 2) / (axis[0] ** 2 - axis[2] ** 2))
+    F = sp.ellipkinc(theta, k ** 2)
+    E = sp.ellipeinc(theta, k ** 2)
+    #print("theta", theta, k, F, E)
+    arr = np.zeros(3)
+    dels = np.sqrt((axis[0]**2+L)*(axis[1]**2+L)*(axis[2]**2+L))
+    c1 = (4*pi*axis[0]*axis[1]*axis[2])/((axis[0]**2 - axis[1]**2)*(np.sqrt(axis[0]**2 - axis[2]**2)))
+    arr[0] = c1*(F-E)
+    c2 = (4*pi*axis[0]*axis[1]*axis[2])/((axis[1]**2 - axis[2]**2)*(np.sqrt(axis[0]**2 - axis[2]**2)))
+    d1 = ((axis[1]**2 + L)*(np.sqrt(axis[0]**2 - axis[2]**2)))/dels
+    arr[2] = c2*(d1-E)
+
+    arr[1] = (4*pi*axis[0]*axis[1]*axis[2])/dels - arr[0] - arr[2]
+
+    arr1 = np.zeros((3, 3))
+    for i in range(3):
+        for j in range(3):
+            if i!=j:
+                arr1[i][j] = (arr[j]-arr[i])/(axis[i]**2 - axis[j]**2)
+    for i in range(3):
+        tmp = 0
+        for j in range(3):
+            tmp += arr1[i][j]/3
+        arr1[i][i] = (4*pi*axis[0]*axis[1]*axis[2])/(3*(axis[i]**2+L)*dels) - tmp
+    
+    if flag == 0:
         return arr
-        
     else:
-        arr = np.zeros((3,3))
-        for i in range(3):
-            for j in range(3):
-                def integrand(s):
-                    return (1/(np.sqrt((axis[0]**2 + s)*(axis[1]**2 + s)*(axis[2]**2 + s))*(axis[i]**2 + s)*(axis[j]**2 + s)))
-                inte = integrate.quad(integrand, L, np.inf)[0]
-                arr[i,j] = inte*np.pi*2*axis[0]*axis[1]*axis[2]
-        return arr
+        return arr1
 
-
-def get_Sijkl(axis, I, Ii, Iij):
+def get_Sijkl(axis, Ii, Iij):
     Sijkl = np.zeros((3, 3, 3, 3))
     for i in range(3):
         for j in range(3):
@@ -266,13 +273,13 @@ def calc_exterior(X):
     lbd = find_lambda(X, axis)
     # print("Lambda is: ", lbd)
 
-    I = IIJ(axis, lbd, 1, 1)
-    Ii = IIJ(axis, lbd, 2, 2)
-    Iij = IIJ(axis, lbd, 3, 3)
+    
+    Ii = IIJ(axis, lbd, 0)
+    Iij = IIJ(axis, lbd, 1)
     
     
 
-    Sijkl = get_Sijkl(axis, I, Ii, Iij)
+    Sijkl = get_Sijkl(axis, Ii, Iij)
     
     lbd_der = lamb_der(X, axis, lbd)
     lbd_d_der = lamb_der2(X, axis, lbd, lbd_der)
