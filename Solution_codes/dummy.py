@@ -1,4 +1,3 @@
-
 try:
     import numpy as np
     import scipy.special as sp
@@ -9,13 +8,38 @@ try:
     import json
     import pandas as pd
     from mayavi import mlab
-    # from mayavi.modules.labels import Labels
-    
-    
 except Exception as e:
     print(e)
 
 
+def saveData(points,data):
+    x = []
+    y = []
+    z = []
+
+    for p in points:
+        x.append(p[0])
+        y.append(p[1])
+        z.append(p[2])
+    
+    sigma11 = []
+    sigma12 = []
+    sigma13 = []
+    sigma22 = []
+    sigma23 = []
+    sigma33 = []
+
+    for d in data:
+        sigma11.append(d[0])
+        sigma22.append(d[1])
+        sigma33.append(d[2])
+        sigma12.append(d[3])
+        sigma13.append(d[4])
+        sigma23.append(d[5])
+
+    df = pd.DataFrame(list(zip(x,y,z,sigma11,sigma22,sigma33,sigma12,sigma13,sigma23)),columns=["x","y","z",'sigma11','sigma22','sigma33','sigma12','sigma13','sigma23'])
+
+    df.to_csv('public/temp.csv',index=False)
 
 
 # Function to find Lambda (the largest root)
@@ -32,26 +56,41 @@ def find_lambda(X, axis):
     return LAMBDA
 
 
-def IIJ(axis, L, i, j):
-    if i==0 and j==0:
-        def v(s):
-            deltaS = 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s)))
-            return deltaS
-        ans = integrate.quad(v, L, np.inf)[0]
-        return ans*2*pi*axis[0]*axis[1]*axis[2]
-    elif j==0:
-        def v(s):
-            return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i-1]**2 + s))
-        ans = integrate.quad(v, L, np.inf) [0]
-        return ans*2*pi*axis[0]*axis[1]*axis[2]
+
+def IIJ(axis, L, flag):
+
+    theta = np.arcsin(np.sqrt((axis[0] ** 2 - axis[2] ** 2) / (axis[0] ** 2 + L)))
+    k = np.sqrt((axis[0] ** 2 - axis[1] ** 2) / (axis[0] ** 2 - axis[2] ** 2))
+    F = sp.ellipkinc(theta, k ** 2)
+    E = sp.ellipeinc(theta, k ** 2)
+    #print("theta", theta, k, F, E)
+    arr = np.zeros(3)
+    dels = np.sqrt((axis[0]**2+L)*(axis[1]**2+L)*(axis[2]**2+L))
+    c1 = (4*pi*axis[0]*axis[1]*axis[2])/((axis[0]**2 - axis[1]**2)*(np.sqrt(axis[0]**2 - axis[2]**2)))
+    arr[0] = c1*(F-E)
+    c2 = (4*pi*axis[0]*axis[1]*axis[2])/((axis[1]**2 - axis[2]**2)*(np.sqrt(axis[0]**2 - axis[2]**2)))
+    d1 = ((axis[1]**2 + L)*(np.sqrt(axis[0]**2 - axis[2]**2)))/dels
+    arr[2] = c2*(d1-E)
+
+    arr[1] = (4*pi*axis[0]*axis[1]*axis[2])/dels - arr[0] - arr[2]
+
+    arr1 = np.zeros((3, 3))
+    for i in range(3):
+        for j in range(3):
+            if i!=j:
+                arr1[i][j] = (arr[j]-arr[i])/(axis[i]**2 - axis[j]**2)
+    for i in range(3):
+        tmp = 0
+        for j in range(3):
+            tmp += arr1[i][j]/3
+        arr1[i][i] = (4*pi*axis[0]*axis[1]*axis[2])/(3*(axis[i]**2+L)*dels) - tmp
+    
+    if flag == 0:
+        return arr
     else:
-        def v(s):
-            return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i-1]**2 + s)*(axis[j-1]**2 + s))
-        ans = integrate.quad(v, L, np.inf) [0]
-        return ans*2*pi*axis[0]*axis[1]*axis[2]
+        return arr1
 
-
-def get_Sijkl(axis, I, Ii, Iij):
+def get_Sijkl(axis, Ii, Iij):
     Sijkl = np.zeros((3, 3, 3, 3))
     for i in range(3):
         for j in range(3):
@@ -68,25 +107,21 @@ def lamb_der(x, a, lambda_):
     #Check if x in inside
     if (x[0]**2/(a[0]**2)) + (x[1]**2/(a[1]**2)) + (x[2]**2/(a[2]**2)) <= 1:
         return [0,0,0]
-    denom = (x[0]**2/(a[0]**2 + lambda_)) + (x[1]**2/(a[1]**2 + lambda_)) + (x[2]**2/(a[2]**2 + lambda_))
+    denom = (x[0]**2/((a[0]**2 + lambda_)**2)) + (x[1]**2/((a[1]**2 + lambda_)**2)) + (x[2]**2/((a[2]**2 + lambda_)**2))
     for i in range(3):
         num = (2*x[i])/(a[i]**2 + lambda_)
         arr.append(num/denom)
     return arr
 
 # Compute double derivative matrix of lambda
-def lamb_der2(x,a,lambda_,lambda_der):
-    arr = np.zeros((3,3))
-    #Check if x in inside
+def lamb_der2(x, a, lambda_, lambda_der):
+    arr = np.zeros((3, 3))
     if (x[0]**2/(a[0]**2)) + (x[1]**2/(a[1]**2)) + (x[2]**2/(a[2]**2)) <= 1:
         return arr
-    denom = (x[0]**2/(a[0]**2 + lambda_)) + (x[1]**2/(a[1]**2 + lambda_)) + (x[2]**2/(a[2]**2 + lambda_))
     for i in range(3):
         for j in range(3):
-            num = 2*denom*lambda_der[i]*lambda_der[j] - 2*(x[i])*lambda_der[j]/(a[i]**2 + lambda_) - 2*(x[j])*lambda_der[i]/(a[j]**2 + lambda_)
-            arr[i,j] = num/denom
+            arr[i, j] = ((2*a[i]*lambda_der[i]*lambda_der[j]) - 2*lambda_der[j]*(a[i]**2 + lambda_))/((a[i]**2+lambda_)*a[i])
     return arr
-
 
 #Compute derivative of Ii wrt to j direction
 def Ii_j_(a,lambda_,lambda_der):
@@ -240,17 +275,11 @@ def calc_exterior(X):
     # print("Lambda is: ", lbd)
 
     #Calculating I, I1, I2, I3, I11, I22, I33, etc
-    I = IIJ(axis, lbd, 0, 0)
-    Ii = [0, 0, 0]
-    for i in range(3):
-        Ii[i] = IIJ(axis, lbd, i+1, 0)
-    Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    for i in range(3):
-        for j in range(3):
-            Iij[i][j] = IIJ(axis, lbd, i+1, j+1)
-    
+        
+    Ii = IIJ(axis, lbd, 0)
+    Iij = IIJ(axis, lbd, 1)
 
-    Sijkl = get_Sijkl(axis, I, Ii, Iij)
+    Sijkl = get_Sijkl(axis, Ii, Iij)
     
     lbd_der = lamb_der(X, axis, lbd)
     lbd_d_der = lamb_der2(X, axis, lbd, lbd_der)
@@ -284,9 +313,9 @@ def calc_exterior(X):
     sig23 = (E/(1+nu))*epsilon[1,2]
     #stress_outside = np.array([[sig11,sig12,sig13],[sig12,sig22,sig23],[sig13,sig23,sig33]])
     #print(stress_outside)
-    print(f"For the point {X} [The point is present outside], the stress values are")
-    print(f"sigma11 = {sig11}\nsigma22 = {sig22}\nsigma33 = {sig33}\nsigma12 = {sig12}\nsigma13 = {sig13}\nsigma23 = {sig23}")
-    print()
+    # print(f"For the point {X} [The point is present outside], the stress values are")
+    # print(f"sigma11 = {sig11}\nsigma22 = {sig22}\nsigma33 = {sig33}\nsigma12 = {sig12}\nsigma13 = {sig13}\nsigma23 = {sig23}")
+    # print()
     return [sig11,sig22,sig33,sig12,sig13,sig23]
     #return stress_outside[0][1]
 
@@ -311,6 +340,7 @@ nu = float(form_data.get('nu'))
 targets = form_data.get('targets')
 plottype = form_data.get('plottype')
 mu = E/(2*(1+nu))
+print(form_data)
 
 chosenDir = 0
 
@@ -333,11 +363,15 @@ intStress = calc_interior()
 print(f"intStress:{intStress}")
 
 def calcStress(x,y,z,direction):
-    if(x**2/a**2 + y**2/b**2 + z**2/c**2 <= 0):
-        return intStress[direction]
+    if((x**2/a**2) + (y**2/b**2) + (z**2/c**2) - 1 <= 0):
+        if intStress[direction]/mu >0:
+            print(f'stress:{intStress[direction]/mu} at cord {(x,y,z)} inside')
+        return intStress[direction]/mu
     else:
         Arr = calc_exterior([x,y,z])
-        return Arr[direction]
+        if Arr[direction]/mu>0:
+            print(f'stress:{Arr[direction]/mu} at cord {(x,y,z)}')
+        return Arr[direction]/mu
 
 
 
@@ -345,9 +379,9 @@ def calcStress(x,y,z,direction):
 print(plottype)
 print(chosenDir)
 
-x = np.linspace(-2*a,2*a,10)
-y = np.linspace(-2*b,2*b,10)
-z = np.linspace(-2*c,2*c,10)
+x = np.linspace(-2*a,2*a,8)
+y = np.linspace(-2*b,2*b,8)
+z = np.linspace(-2*c,2*c,8)
 B,A, C = np.meshgrid(x,y,z)
 # print(X.shape)
 print("plotting..")
@@ -371,10 +405,11 @@ mlab.pipeline.image_plane_widget(src)
 
 # plot = mlab.points3d(A,B,C,stressArr,scale_mode='none')
 # adjust scalae_factor through mayavi gui for better visibility
-plot.module_manager.scalar_lut_manager.show_legend = True
-plot.module_manager.scalar_lut_manager.scalar_bar_representation.minimum_size = [2, 2]
-plot.module_manager.scalar_lut_manager.scalar_bar_representation.position = [0.884375  , 0.41530076]
-plot.module_manager.scalar_lut_manager.scalar_bar_representation.position2 = [0.075     , 0.51279791]
+mlab.colorbar(plot)
+# plot.module_manager.scalar_lut_manager.show_legend = True
+# plot.module_manager.scalar_lut_manager.scalar_bar_representation.minimum_size = [2, 2]
+# plot.module_manager.scalar_lut_manager.scalar_bar_representation.position = [0.884375  , 0.41530076]
+# plot.module_manager.scalar_lut_manager.scalar_bar_representation.position2 = [0.075     , 0.51279791]
 
 
 mlab.axes(line_width=1.0)
