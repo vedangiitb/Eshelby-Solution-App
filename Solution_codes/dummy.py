@@ -382,9 +382,9 @@ def calcStress(x,y,z,direction):
 print(plottype)
 print(chosenDir)
 
-x = np.linspace(-2*a,2*a,8)
-y = np.linspace(-2*b,2*b,8)
-z = np.linspace(-2*c,2*c,8)
+x = np.linspace(-2*a,2*a,10)
+y = np.linspace(-2*b,2*b,10)
+z = np.linspace(-2*c,2*c,10)
 B,A, C = np.meshgrid(x,y,z)
 # print(X.shape)
 print("plotting..")
