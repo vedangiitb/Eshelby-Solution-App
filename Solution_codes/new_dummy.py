@@ -1,4 +1,3 @@
-
 try:
     import numpy as np
     import scipy.special as sp
@@ -6,9 +5,8 @@ try:
     import scipy.integrate as integrate
     pi = np.pi
     import sys
-    import json
+    import matplotlib.pyplot as plt
     import pandas as pd
-    from mayavi import mlab
     # from mayavi.modules.labels import Labels
     
     
@@ -86,7 +84,6 @@ def lamb_der2(x,a,lambda_,lambda_der):
             num = 2*denom*lambda_der[i]*lambda_der[j] - 2*(x[i])*lambda_der[j]/(a[i]**2 + lambda_) - 2*(x[j])*lambda_der[i]/(a[j]**2 + lambda_)
             arr[i,j] = num/denom
     return arr
-
 
 #Compute derivative of Ii wrt to j direction
 def Ii_j_(a,lambda_,lambda_der):
@@ -293,41 +290,24 @@ def calc_exterior(X):
 
 
 # Load the form data passed from Express.js
-form_data = json.loads(sys.argv[1])
+
 
 # Taking Inputs
-a = float(form_data.get('a'))
-b = float(form_data.get('b'))
-c = float(form_data.get('c'))
+a = 25.001
+b = 25
+c = 24.999
 axis = [a,b,c]
-eps11 = float(form_data.get('eps11'))
-eps22 = float(form_data.get('eps22'))
-eps33 = float(form_data.get('eps33'))
-eps12 = float(form_data.get('eps12'))
-eps23 = float(form_data.get('eps23'))
-eps31 = float(form_data.get('eps13'))
-E = float(form_data.get('ep'))
-nu = float(form_data.get('nu'))
-targets = form_data.get('targets')
-plottype = form_data.get('plottype')
+eps11 = 0.01
+eps22 = 0.01
+eps33 = 0.01
+eps12 =0
+eps23 = 0
+eps31 = 0
+E = 1040
+nu = 0.3
+
+
 mu = E/(2*(1+nu))
-
-chosenDir = 0
-
-if plottype == "22":
-    chosenDir = 1
-elif plottype=="33":
-    chosenDir = 2
-elif plottype=="12":
-    chosenDir = 3
-elif plottype=="13":
-    chosenDir = 4
-elif plottype == '23':
-    chosenDir = 5
-else:
-    chosenDir = 0
-
-
 
 intStress = calc_interior()
 print(f"intStress:{intStress}")
@@ -341,93 +321,20 @@ def calcStress(x,y,z,direction):
 
 
 
-# step = 4*a/13
-print(plottype)
-print(chosenDir)
+R = 25
+G = E/(2*(1+nu))
+x = np.linspace(0,6,100)
+s11 = np.zeros(x.shape)
 
-x = np.linspace(-2*a,2*a,10)
-y = np.linspace(-2*b,2*b,10)
-z = np.linspace(-2*c,2*c,10)
-B,A, C = np.meshgrid(x,y,z)
-# print(X.shape)
-print("plotting..")
-stressArr = np.zeros(B.shape)
+for i in range(len(x)):
+    s11[i] = calcStress(x[i]*R,0,0,0)/G
 
-for i in range(A.shape[0]):
-    for j in range(A.shape[1]):
-        for k in range(A.shape[2]):
-            stressArr[i][j][k] = calcStress(A[i][j][k],B[i][j][k],C[i][j][k],chosenDir)
-            print(A[i][j][k],B[i][j][k],C[i][j][k])
-
-
-# Plot the scalar field
-src = mlab.pipeline.scalar_field(A,B,C, stressArr)
-
-# Add contours to the scalar field
-plot = mlab.pipeline.surface(src)
-mlab.pipeline.image_plane_widget(src)
+plt.plot(x,s11)
+plt.show()
 
 
 
-# plot = mlab.points3d(A,B,C,stressArr,scale_mode='none')
-# adjust scalae_factor through mayavi gui for better visibility
-plot.module_manager.scalar_lut_manager.show_legend = True
-plot.module_manager.scalar_lut_manager.scalar_bar_representation.minimum_size = [2, 2]
-plot.module_manager.scalar_lut_manager.scalar_bar_representation.position = [0.884375  , 0.41530076]
-plot.module_manager.scalar_lut_manager.scalar_bar_representation.position2 = [0.075     , 0.51279791]
 
 
-mlab.axes(line_width=1.0)
-# mlab.volume_slice(A,B,C,stressArr,extent=[-2*a,2*a,-2*b,2*b,-2*c,2*c])
-# mlab.set_picker_props(figure=None, pick_type='point_picker', tolerance=0.025, text_color=None)
-# mlab.set_picker_props()
-engine = mlab.get_engine()
-scene = engine.scenes[0]
-scene.scene.background = (0.0, 0.0, 0.0)
-
-# labels = Labels()
-# engine.add_filter(labels,plot.module_manager)
-# labels.actor.mapper.label_mode = 'label_field_data'
-
-
-mlab.show()
-print("plotting finished")
-
-# def volume_slice():
-#     mlab.volume_slice(X,Y,Z,sigma_xx)
-#     mlab.axes(line_width=1.0,xlabel='x',ylabel='y',zlabel='z')
-
-
-# if __name__ =="__main__":
-
-#     if sys.argv[1] != 'plot':
-#         try:
-#             # Load the form data passed from Express.js
-#             form_data = json.loads(sys.argv[1])
-
-#             # Taking Inputs
-#             a = float(form_data.get('a',''))
-#             b = float(form_data.get('b',''))
-#             c = float(form_data.get('c',''))
-#             eps11 = float(form_data.get('eps11'))
-#             eps22 = float(form_data.get('eps22'))
-#             eps33 = float(form_data.get('eps33'))
-#             eps12 = float(form_data.get('eps12'))
-#             eps23 = float(form_data.get('eps23'))
-#             eps31 = float(form_data.get('eps13'))
-#             E = float(form_data.get('ep'))
-#             nu = float(form_data.get('nu'))
-
-
-#             axis = [a, b, c]
-
-#             # print(f"input data:{a,b,c,eps11,eps12,eps31,eps23,eps22,eps33,E,nu}")
-
-#             output_data = dummy_func(a,b,c,eps11,eps22,eps33,eps12,eps23,eps31,E,nu)
-
-#             print(output_data)
-
-#         except Exception as e:
-#             print("error:", e)
 
 

@@ -64,24 +64,24 @@ let inputData = {};
 function convertToMM(value, units) {
   switch (units) {
       case 'cm':
-          return value * 10; 
+          return value/100; 
       case 'm':
-          return value * 1000; 
+          return value; 
       case 'um':
-          return value / 1000;
-      case 'nm':
           return value / 1000000;
+      case 'nm':
+          return value / 1000000000;
       default:
-          return value; // No conversion needed for default unit (mm)
+          return value/1000; // No conversion needed for default unit (mm)
   }
 }
 
 function convertToGPa(value, units) {
   switch (units) {
       case 'MPa':
-          return value * 0.001; 
+          return value *1000; 
       default:
-          return value; // No conversion needed for default unit(GPa)
+          return value*1000000000; // No conversion needed for default unit(GPa)
   }
 }
 
