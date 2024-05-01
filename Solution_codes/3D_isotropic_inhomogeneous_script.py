@@ -1,13 +1,52 @@
-import numpy as np
-import scipy.special as sp
-import sympy as sym
-import scipy.integrate as integrate
-
-pi = np.pi
-
+try:
+    import numpy as np
+    import scipy.special as sp
+    import sympy as sym
+    import scipy.integrate as integrate
+    pi = np.pi
+    import sys
+    import json
+    import pandas as pd
+except Exception as e:
+    print(e)
 # Function to find Lambda (the largest root)
 deltaij = np.identity(3)
 
+
+def saveData(points,data):
+    x = []
+    y = []
+    z = []
+
+    for p in points:
+        x.append(p[0])
+        y.append(p[1])
+        z.append(p[2])
+    
+    sigma11 = []
+    sigma12 = []
+    sigma13 = []
+    sigma21 = []
+    sigma22 = []
+    sigma23 = []
+    sigma31 = []
+    sigma32 = []
+    sigma33 = []
+
+    for d in data:
+        sigma11.append(d[0])
+        sigma12.append(d[1])
+        sigma13.append(d[2])
+        sigma21.append(d[3])
+        sigma22.append(d[4])
+        sigma23.append(d[5])
+        sigma31.append(d[6])
+        sigma32.append(d[7])
+        sigma33.append(d[8])
+
+    df = pd.DataFrame(list(zip(x,y,z,sigma11,sigma12,sigma13,sigma21,sigma22,sigma23,sigma31,sigma32,sigma33)),columns=["x","y","z",'sigma11','sigma12','sigma13','sigma21','sigma22','sigma23','sigma31','sigma32','sigma33'])
+
+    df.to_csv('public/temp.csv',index=False)
 
 def find_lambda(X, axis):
     ans = sym.symbols('ans')
@@ -169,13 +208,13 @@ def calc_interior():
 
     epsilon_kk = epsilon[0][0] + epsilon[1][1] + epsilon[2][2]
 
-    print("Epsilon is:")
+    # print("Epsilon is:")
 
-    for i in range(3):
-        for j in range(3):
-            print(epsilon[i][j], end=" ")
-        print()
-    print()
+    # for i in range(3):
+    #     for j in range(3):
+    #         print(epsilon[i][j], end=" ")
+    #     print()
+    # print()
     for i in range(3):
         for j in range(3):
             epsilon[i][j] -= epsilon_star_star[i][j]
@@ -192,14 +231,29 @@ def calc_interior():
     sigmaij[2][0] = sigmaij[0][2]
     sigmaij[2][1] = sigmaij[1][2]
 
-    print("SIGMAij for inside part by formula is:")
+    # print("SIGMAij for inside part by formula is:")
 
-    for i in range(3):
-        for j in range(3):
-            print(sigmaij[i][j] + sigma_not_ij[i][j], end=" ")
-        print()
+    sigma11 =sigmaij[0][0][0] + sigma_not_ij[0][0]
+    sigma12 =sigmaij[0][1][0] + sigma_not_ij[0][1]
+    sigma13 =sigmaij[0][2][0] + sigma_not_ij[0][2]
+    sigma21 =sigmaij[1][0][0] + sigma_not_ij[1][0]
+    sigma22 =sigmaij[1][1][0] + sigma_not_ij[1][1]
+    sigma23 =sigmaij[1][2][0] + sigma_not_ij[1][2]
+    sigma31 =sigmaij[2][0][0] + sigma_not_ij[2][0]
+    sigma32 =sigmaij[2][1][0] + sigma_not_ij[2][1]
+    sigma33 =sigmaij[2][2][0] + sigma_not_ij[2][2]
+    data = [sigma11,sigma12,sigma13,sigma21,sigma22,sigma23,sigma31,sigma32,sigma33]
 
-    print()
+
+    print(f"sigma11 = {sigma11}\nsigma12 = {sigma12}\nsigma13 = {sigma13}\nsigma21 = {sigma21}\nsigma22 = {sigma22}\nsigma23 = {sigma23}\nsigma31 = {sigma31}\nsigma32 = {sigma32}\nsigma33 = {sigma33}")
+
+    return data
+    # for i in range(3):
+    #     for j in range(3):
+    #         print(sigmaij[i][j][0] + sigma_not_ij[i][j], end=" ")
+    #     print()
+
+    # print()
 
 
 def calc_exterior():
@@ -227,153 +281,187 @@ def calc_exterior():
     sigmaij_out[2][0] = sigmaij_out[0][2]
     sigmaij_out[2][1] = sigmaij_out[1][2]
 
-    print("SIGMAij for exterior point by formula is:")
+    sigma11 =sigmaij_out[0][0][0] + sigma_not_ij[0][0]
+    sigma12 =sigmaij_out[0][1][0] + sigma_not_ij[0][1]
+    sigma13 =sigmaij_out[0][2][0] + sigma_not_ij[0][2]
+    sigma21 =sigmaij_out[1][0][0] + sigma_not_ij[1][0]
+    sigma22 =sigmaij_out[1][1][0] + sigma_not_ij[1][1]
+    sigma23 =sigmaij_out[1][2][0] + sigma_not_ij[1][2]
+    sigma31 =sigmaij_out[2][0][0] + sigma_not_ij[2][0]
+    sigma32 =sigmaij_out[2][1][0] + sigma_not_ij[2][1]
+    sigma33 =sigmaij_out[2][2][0] + sigma_not_ij[2][2]
+    data = [sigma11,sigma12,sigma13,sigma21,sigma22,sigma23,sigma31,sigma32,sigma33]
 
-    for i in range(3):
-        for j in range(3):
-            print(sigmaij_out[i][j] + sigma_not_ij[i][j], end=" ")
-        print()
+    print(f"sigma11 = {sigma11}\nsigma12 = {sigma12}\nsigma13 = {sigma13}\nsigma21 = {sigma21}\nsigma22 = {sigma22}\nsigma23 = {sigma23}\nsigma31 = {sigma31}\nsigma32 = {sigma32}\nsigma33 = {sigma33}")
 
-    print()
+    return data
+    # print("SIGMAij for exterior point by formula is:")
 
+    # for i in range(3):
+    #     for j in range(3):
+    #         print(sigmaij_out[i][j][0]+ sigma_not_ij[i][j], end=" ")
+    #     print()
 
-a = float(input())
-b = float(input())
-c = float(input())
-axis = [a, b, c]
-eps_p_11 = float(input())
-eps_p_22 = float(input())
-eps_p_33 = float(input())
-eps_p_12 = float(input())
-eps_p_23 = float(input())
-eps_p_31 = float(input())
+    # print()
 
-E = float(input())  # Young's Modulus
-nu = float(input())  # Poisson's Ratio
-mu = E / (2 * (1 + nu))
-lamda = 2 * mu * nu / (1 - 2 * nu)
+try:
+    # Load the form data passed from Express.js
+    form_data = json.loads(sys.argv[1])
 
-E_star = float(input())  # Young's Modulus
-nu_star = float(input())  # Poisson's Ratio
-mu_star = E / (2 * (1 + nu))
-lamda_star = 2 * mu_star * nu_star / (1 - 2 * nu_star)
+    # Taking Inputs
+    a = float(form_data.get('a'))
+    b = float(form_data.get('b'))
+    c = float(form_data.get('c'))
+    eps_p_11 = float(form_data.get('eps11'))
+    eps_p_22 = float(form_data.get('eps22'))
+    eps_p_33 = float(form_data.get('eps33'))
+    eps_p_12 = float(form_data.get('eps12'))
+    eps_p_23 = float(form_data.get('eps23'))
+    eps_p_31 = float(form_data.get('eps13'))
+    E = float(form_data.get('ep'))
+    E_star = float(form_data.get('eps'))
+    nu = float(form_data.get('nu'))
+    nu_star = float(form_data.get('nus'))
+    mu = E/(2*(1+nu))
+    mu_star = E/(2*(1+nu))
+    lamda = 2 * mu * nu / (1 - 2 * nu)
+    lamda_star = 2 * mu_star * nu_star / (1 - 2 * nu_star)
 
-eps_0_11 = 0
-eps_0_22 = 0
-eps_0_33 = 0
-eps_0_12 = 0
-eps_0_23 = 0
-eps_0_31 = 0
+    targets = form_data.get('targets')
 
-x1 = float(input())
-x2 = float(input())
-x3 = float(input())
-X = [x1, x2, x3]
-
-Cijkl = np.zeros((3, 3, 3, 3))
-for i in range(3):
-    for j in range(3):
-        for k in range(3):
-            for l in range(3):
-                Cijkl[i][j][k][l] = lamda * deltaij[i][j] * deltaij[k][l] + mu * (
-                            deltaij[i][k] * deltaij[j][l] + deltaij[i][l] * deltaij[j][k])
-                Cijkl[k][l][i][j] = Cijkl[i][j][k][l]
-
-# print("Cijkl=", Cijkl)
-
-Cijkl_star = np.zeros((3, 3, 3, 3))
-for i in range(3):
-    for j in range(3):
-        for k in range(3):
-            for l in range(3):
-                Cijkl_star[i][j][k][l] = lamda_star * deltaij[i][j] * deltaij[k][l] + mu_star * (
-                            deltaij[i][k] * deltaij[j][l] + deltaij[i][l] * deltaij[j][k])
-                Cijkl_star[k][l][i][j] = Cijkl_star[i][j][k][l]
-
-# print("Cijkl star=", Cijkl_star)
+    axis = [a, b, c]
 
 
-epsilon_p = [[eps_p_11, eps_p_12, eps_p_31], [eps_p_12, eps_p_22, eps_p_23], [eps_p_31, eps_p_23, eps_p_33]]
-epsilon_not = [[eps_0_11, eps_0_12, eps_0_31], [eps_0_12, eps_0_22, eps_0_23], [eps_0_31, eps_0_23, eps_0_33]]
+    eps_0_11 = 0
+    eps_0_22 = 0
+    eps_0_33 = 0
+    eps_0_12 = 0
+    eps_0_23 = 0
+    eps_0_31 = 0
 
-lbd = find_lambda(X, axis)
-# print("Lambda is: ", lbd)
-print()
+    targets = form_data.get('targets')
 
-# Calculating I, I1, I2, I3, I11, I22, I33, etc
+    if len(targets)==0:
+        print("No points entered! Please enter the points where you want to compute the results")
 
-I = IIJ(axis, lbd, 0, 0)
-Ii = [0, 0, 0]
-for i in range(3):
-    Ii[i] = IIJ(axis, lbd, i + 1, 0)
-Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-for i in range(3):
-    for j in range(3):
-        Iij[i][j] = IIJ(axis, lbd, i + 1, j + 1)
+    opData = []
 
-lbd_der = lamb_der(X, axis, lbd)
-lbd_d_der = lamb_der2(X, axis, lbd, lbd_der)
+    for x1,x2,x3 in targets:
 
-IIj = Ii_j_(X, axis, lbd, lbd_der)
-IIJk = Iij_k_(X, axis, lbd, lbd_der)
-IIJkl = Iij_kl_(X, axis, lbd, lbd_der, lbd_d_der)
-IIjk = Ii_jk_(X, axis, lbd, lbd_der, lbd_d_der)
+        X = [x1, x2, x3]
 
-Sijkl = get_Sijkl(axis, I, Ii, Iij)
+        Cijkl = np.zeros((3, 3, 3, 3))
+        for i in range(3):
+            for j in range(3):
+                for k in range(3):
+                    for l in range(3):
+                        Cijkl[i][j][k][l] = lamda * deltaij[i][j] * deltaij[k][l] + mu * (
+                                    deltaij[i][k] * deltaij[j][l] + deltaij[i][l] * deltaij[j][k])
+                        Cijkl[k][l][i][j] = Cijkl[i][j][k][l]
 
-#print("Sijkl is dsjgfegjegfg: ")
-#print(Sijkl)
-#print("--------------------------------------------------------------------------------------------------------------")
-#print()
+        # print("Cijkl=", Cijkl)
 
-Dijkl = get_Dijkl(Sijkl, deltaij, X, axis, IIj, IIJk, IIJkl, IIjk)
+        Cijkl_star = np.zeros((3, 3, 3, 3))
+        for i in range(3):
+            for j in range(3):
+                for k in range(3):
+                    for l in range(3):
+                        Cijkl_star[i][j][k][l] = lamda_star * deltaij[i][j] * deltaij[k][l] + mu_star * (
+                                    deltaij[i][k] * deltaij[j][l] + deltaij[i][l] * deltaij[j][k])
+                        Cijkl_star[k][l][i][j] = Cijkl_star[i][j][k][l]
 
-eps_star_star_12 = (2 * (mu - mu_star) * (epsilon_not[0][1]) + 2 * mu_star * epsilon_p[0][1]) / (
-            4 * (mu - mu_star) * Sijkl[0][1][0][1] + 2 * mu)
-eps_star_star_23 = (2 * (mu - mu_star) * (epsilon_not[1][2]) + 2 * mu_star * epsilon_p[1][2]) / (
-            4 * (mu - mu_star) * Sijkl[1][2][1][2] + 2 * mu)
-eps_star_star_31 = (2 * (mu - mu_star) * (epsilon_not[2][0]) + 2 * mu_star * epsilon_p[2][0]) / (
-            4 * (mu - mu_star) * Sijkl[2][0][2][0] + 2 * mu)
-
-epsilon_star_star = [[0, eps_star_star_12, eps_star_star_31], [eps_star_star_12, 0, eps_star_star_23],
-                     [eps_star_star_31, eps_star_star_23, 0]]
-
-# SOLVING FOR epsilon star_star 11,22,33
-
-K = E / (3 * (1 - 2 * nu))
-K_star = E_star / (3 * (1 - 2 * nu_star))
-t = K_star / K
-
-A = [[(1 - t) * Sijkl[0][0][0][0] - 1, (1 - t) * Sijkl[0][0][1][1], (1 - t) * Sijkl[0][0][2][2]],
-     [(1 - t) * Sijkl[1][1][0][0], (1 - t) * Sijkl[1][1][1][1] - 1, (1 - t) * Sijkl[1][1][2][2]],
-     [(1 - t) * Sijkl[2][2][0][0], (1 - t) * Sijkl[2][2][1][1], (1 - t) * Sijkl[2][2][2][2] - 1]]
-
-zz1, zz2, zz3 = 0, 0, 0
-
-for m in range(3):
-    for n in range(3):
-        if m != n:
-            zz1 = zz1 + Sijkl[0][0][m][n] * epsilon_star_star[m][n]
-            zz2 = zz2 + Sijkl[1][1][m][n] * epsilon_star_star[m][n]
-            zz3 = zz3 + Sijkl[2][2][m][n] * epsilon_star_star[m][n]
-
-B = [[(t - 1) * epsilon_not[0][0] - t * epsilon_p[0][0] - (1 - t) * zz1],
-     [(t - 1) * epsilon_not[1][1] - t * epsilon_p[1][1] - (1 - t) * zz2],
-     [(t - 1) * epsilon_not[2][2] - t * epsilon_p[2][2] - (1 - t) * zz3]]
-
-A_inv = (np.linalg.inv(A))
-
-epsilon_star_11_22_33 = np.dot(A_inv, B)
-
-epsilon_star_star[0][0] = epsilon_star_11_22_33[0]
-epsilon_star_star[1][1] = epsilon_star_11_22_33[1]
-epsilon_star_star[2][2] = epsilon_star_11_22_33[2]
+        # print("Cijkl star=", Cijkl_star)
 
 
-sigma_not_ij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]  # stress at infinity
-if x1 ** 2 / a ** 2 + x2 ** 2 / b ** 2 + x3 ** 2 / c ** 2 <= 1:
-    print("Point is inside")
-    calc_interior()
-else:
-    print("Point is outside")
-    calc_exterior()
+        epsilon_p = [[eps_p_11, eps_p_12, eps_p_31], [eps_p_12, eps_p_22, eps_p_23], [eps_p_31, eps_p_23, eps_p_33]]
+        epsilon_not = [[eps_0_11, eps_0_12, eps_0_31], [eps_0_12, eps_0_22, eps_0_23], [eps_0_31, eps_0_23, eps_0_33]]
+
+        lbd = find_lambda(X, axis)
+        # print("Lambda is: ", lbd)
+        # print()
+
+        # Calculating I, I1, I2, I3, I11, I22, I33, etc
+
+        I = IIJ(axis, lbd, 0, 0)
+        Ii = [0, 0, 0]
+        for i in range(3):
+            Ii[i] = IIJ(axis, lbd, i + 1, 0)
+        Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        for i in range(3):
+            for j in range(3):
+                Iij[i][j] = IIJ(axis, lbd, i + 1, j + 1)
+
+        lbd_der = lamb_der(X, axis, lbd)
+        lbd_d_der = lamb_der2(X, axis, lbd, lbd_der)
+
+        IIj = Ii_j_(X, axis, lbd, lbd_der)
+        IIJk = Iij_k_(X, axis, lbd, lbd_der)
+        IIJkl = Iij_kl_(X, axis, lbd, lbd_der, lbd_d_der)
+        IIjk = Ii_jk_(X, axis, lbd, lbd_der, lbd_d_der)
+
+        Sijkl = get_Sijkl(axis, I, Ii, Iij)
+
+        #print("Sijkl is dsjgfegjegfg: ")
+        #print(Sijkl)
+        #print("--------------------------------------------------------------------------------------------------------------")
+        #print()
+
+        Dijkl = get_Dijkl(Sijkl, deltaij, X, axis, IIj, IIJk, IIJkl, IIjk)
+
+        eps_star_star_12 = (2 * (mu - mu_star) * (epsilon_not[0][1]) + 2 * mu_star * epsilon_p[0][1]) / (
+                    4 * (mu - mu_star) * Sijkl[0][1][0][1] + 2 * mu)
+        eps_star_star_23 = (2 * (mu - mu_star) * (epsilon_not[1][2]) + 2 * mu_star * epsilon_p[1][2]) / (
+                    4 * (mu - mu_star) * Sijkl[1][2][1][2] + 2 * mu)
+        eps_star_star_31 = (2 * (mu - mu_star) * (epsilon_not[2][0]) + 2 * mu_star * epsilon_p[2][0]) / (
+                    4 * (mu - mu_star) * Sijkl[2][0][2][0] + 2 * mu)
+
+        epsilon_star_star = [[0, eps_star_star_12, eps_star_star_31], [eps_star_star_12, 0, eps_star_star_23],
+                            [eps_star_star_31, eps_star_star_23, 0]]
+
+        # SOLVING FOR epsilon star_star 11,22,33
+
+        K = E / (3 * (1 - 2 * nu))
+        K_star = E_star / (3 * (1 - 2 * nu_star))
+        t = K_star / K
+
+        A = [[(1 - t) * Sijkl[0][0][0][0] - 1, (1 - t) * Sijkl[0][0][1][1], (1 - t) * Sijkl[0][0][2][2]],
+            [(1 - t) * Sijkl[1][1][0][0], (1 - t) * Sijkl[1][1][1][1] - 1, (1 - t) * Sijkl[1][1][2][2]],
+            [(1 - t) * Sijkl[2][2][0][0], (1 - t) * Sijkl[2][2][1][1], (1 - t) * Sijkl[2][2][2][2] - 1]]
+
+        zz1, zz2, zz3 = 0, 0, 0
+
+        for m in range(3):
+            for n in range(3):
+                if m != n:
+                    zz1 = zz1 + Sijkl[0][0][m][n] * epsilon_star_star[m][n]
+                    zz2 = zz2 + Sijkl[1][1][m][n] * epsilon_star_star[m][n]
+                    zz3 = zz3 + Sijkl[2][2][m][n] * epsilon_star_star[m][n]
+
+        B = [[(t - 1) * epsilon_not[0][0] - t * epsilon_p[0][0] - (1 - t) * zz1],
+            [(t - 1) * epsilon_not[1][1] - t * epsilon_p[1][1] - (1 - t) * zz2],
+            [(t - 1) * epsilon_not[2][2] - t * epsilon_p[2][2] - (1 - t) * zz3]]
+
+        A_inv = (np.linalg.inv(A))
+
+        epsilon_star_11_22_33 = np.dot(A_inv, B)
+
+        epsilon_star_star[0][0] = epsilon_star_11_22_33[0]
+        epsilon_star_star[1][1] = epsilon_star_11_22_33[1]
+        epsilon_star_star[2][2] = epsilon_star_11_22_33[2]
+
+
+        sigma_not_ij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]  # stress at infinity
+        if x1 ** 2 / a ** 2 + x2 ** 2 / b ** 2 + x3 ** 2 / c ** 2 <= 1:
+            print(f"For the points {x1,x2,x3}",end=" ")
+            print("[the point is inside]")
+            data = calc_interior()
+            opData.append(data)
+        else:
+            print(f"For the points {x1,x2,x3}",end=" ")
+            print("[the point is outside]")
+            data = calc_exterior()
+            opData.append(data)
+
+    saveData(targets,opData)
+except Exception as e:
+    print("error:", e)

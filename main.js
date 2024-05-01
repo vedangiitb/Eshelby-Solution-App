@@ -238,7 +238,7 @@ appExpress.post('/isoinhomoinput',validateInput,(req,res)=>{
   console.log(inputData);
 
 
-  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_inhomogeneous.py', JSON.stringify(inputData)]);
+  const pythonProcess = spawn('python',['./Solution_codes/3D_isotropic_inhomogeneous_script.py', JSON.stringify(inputData)]);
   let output = '';
   let error = '';
   pythonProcess.stdout.on('data', (data) => {
@@ -259,13 +259,8 @@ appExpress.post('/isoinhomoinput',validateInput,(req,res)=>{
 
 })
 
-appExpress.post('/dummy',(req,res)=>{
-  const plot_label = req.body.plot_label;
-  inputData.plottype = plot_label;
-  console.log("************")
-  console.log(inputData.plottype)
-  console.log(plot_label)
-  console.log("************")
+appExpress.get('/dummy',(req,res)=>{
+  inputData.plottype = req.body.plot_label;
   const pythonProcess = spawn('python',['./Solution_codes/dummy.py',JSON.stringify(inputData)]);
 
   // Handle Python process events

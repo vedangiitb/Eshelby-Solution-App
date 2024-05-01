@@ -322,7 +322,7 @@ elif plottype=="12":
 elif plottype=="13":
     chosenDir = 4
 else:
-    chosenDir = 5
+    chosenDir = 0
 
 intStress = calc_interior()
 print(f"intStress:{intStress}")
@@ -336,11 +336,11 @@ def calcStress(x,y,z,direction):
 
 
 
-step = 4*a/13
+# step = 4*a/13
 
-x = np.linspace(-2*a,2*a,13)
-y = np.linspace(-2*b,2*b,int(4*b/step))
-z = np.linspace(-2*c,2*c,int(4*c/step))
+x = np.linspace(-2*a,2*a,12)
+y = np.linspace(-2*b,2*b,12)
+z = np.linspace(-2*c,2*c,12)
 B,A, C = np.meshgrid(x,y,z)
 # print(X.shape)
 print("plotting..")
