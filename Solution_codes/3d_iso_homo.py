@@ -55,26 +55,41 @@ def find_lambda(X, axis):
     return LAMBDA
 
 
-def IIJ(axis, L, i, j):
-    if i==0 and j==0:
-        def v(s):
-            deltaS = 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s)))
-            return deltaS
-        ans = integrate.quad(v, L, np.inf)[0]
-        return ans*2*pi*axis[0]*axis[1]*axis[2]
-    elif j==0:
-        def v(s):
-            return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i-1]**2 + s))
-        ans = integrate.quad(v, L, np.inf) [0]
-        return ans*2*pi*axis[0]*axis[1]*axis[2]
+
+def IIJ(axis, L, flag):
+
+    theta = np.arcsin(np.sqrt((axis[0] ** 2 - axis[2] ** 2) / (axis[0] ** 2 + L)))
+    k = np.sqrt((axis[0] ** 2 - axis[1] ** 2) / (axis[0] ** 2 - axis[2] ** 2))
+    F = sp.ellipkinc(theta, k ** 2)
+    E = sp.ellipeinc(theta, k ** 2)
+    #print("theta", theta, k, F, E)
+    arr = np.zeros(3)
+    dels = np.sqrt((axis[0]**2+L)*(axis[1]**2+L)*(axis[2]**2+L))
+    c1 = (4*pi*axis[0]*axis[1]*axis[2])/((axis[0]**2 - axis[1]**2)*(np.sqrt(axis[0]**2 - axis[2]**2)))
+    arr[0] = c1*(F-E)
+    c2 = (4*pi*axis[0]*axis[1]*axis[2])/((axis[1]**2 - axis[2]**2)*(np.sqrt(axis[0]**2 - axis[2]**2)))
+    d1 = ((axis[1]**2 + L)*(np.sqrt(axis[0]**2 - axis[2]**2)))/dels
+    arr[2] = c2*(d1-E)
+
+    arr[1] = (4*pi*axis[0]*axis[1]*axis[2])/dels - arr[0] - arr[2]
+
+    arr1 = np.zeros((3, 3))
+    for i in range(3):
+        for j in range(3):
+            if i!=j:
+                arr1[i][j] = (arr[j]-arr[i])/(axis[i]**2 - axis[j]**2)
+    for i in range(3):
+        tmp = 0
+        for j in range(3):
+            tmp += arr1[i][j]/3
+        arr1[i][i] = (4*pi*axis[0]*axis[1]*axis[2])/(3*(axis[i]**2+L)*dels) - tmp
+    
+    if flag == 0:
+        return arr
     else:
-        def v(s):
-            return 1 / (np.sqrt((axis[0] ** 2 + s) * (axis[1] ** 2 + s) * (axis[2] ** 2 + s))*(axis[i-1]**2 + s)*(axis[j-1]**2 + s))
-        ans = integrate.quad(v, L, np.inf) [0]
-        return ans*2*pi*axis[0]*axis[1]*axis[2]
+        return arr1
 
-
-def get_Sijkl(axis, I, Ii, Iij):
+def get_Sijkl(axis, Ii, Iij):
     Sijkl = np.zeros((3, 3, 3, 3))
     for i in range(3):
         for j in range(3):
@@ -91,25 +106,21 @@ def lamb_der(x, a, lambda_):
     #Check if x in inside
     if (x[0]**2/(a[0]**2)) + (x[1]**2/(a[1]**2)) + (x[2]**2/(a[2]**2)) <= 1:
         return [0,0,0]
-    denom = (x[0]**2/(a[0]**2 + lambda_)) + (x[1]**2/(a[1]**2 + lambda_)) + (x[2]**2/(a[2]**2 + lambda_))
+    denom = (x[0]**2/((a[0]**2 + lambda_)**2)) + (x[1]**2/((a[1]**2 + lambda_)**2)) + (x[2]**2/((a[2]**2 + lambda_)**2))
     for i in range(3):
         num = (2*x[i])/(a[i]**2 + lambda_)
         arr.append(num/denom)
     return arr
 
 # Compute double derivative matrix of lambda
-def lamb_der2(x,a,lambda_,lambda_der):
-    arr = np.zeros((3,3))
-    #Check if x in inside
+def lamb_der2(x, a, lambda_, lambda_der):
+    arr = np.zeros((3, 3))
     if (x[0]**2/(a[0]**2)) + (x[1]**2/(a[1]**2)) + (x[2]**2/(a[2]**2)) <= 1:
         return arr
-    denom = (x[0]**2/(a[0]**2 + lambda_)) + (x[1]**2/(a[1]**2 + lambda_)) + (x[2]**2/(a[2]**2 + lambda_))
     for i in range(3):
         for j in range(3):
-            num = 2*denom*lambda_der[i]*lambda_der[j] - 2*(x[i])*lambda_der[j]/(a[i]**2 + lambda_) - 2*(x[j])*lambda_der[i]/(a[j]**2 + lambda_)
-            arr[i,j] = num/denom
+            arr[i, j] = ((2*a[i]*lambda_der[i]*lambda_der[j]) - 2*lambda_der[j]*(a[i]**2 + lambda_))/((a[i]**2+lambda_)*a[i])
     return arr
-
 
 #Compute derivative of Ii wrt to j direction
 def Ii_j_(a,lambda_,lambda_der):
@@ -262,18 +273,13 @@ def calc_exterior(X):
     lbd = find_lambda(X, axis)
     # print("Lambda is: ", lbd)
 
-    #Calculating I, I1, I2, I3, I11, I22, I33, etc
-    I = IIJ(axis, lbd, 0, 0)
-    Ii = [0, 0, 0]
-    for i in range(3):
-        Ii[i] = IIJ(axis, lbd, i+1, 0)
-    Iij = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    for i in range(3):
-        for j in range(3):
-            Iij[i][j] = IIJ(axis, lbd, i+1, j+1)
+    
+    Ii = IIJ(axis, lbd, 0)
+    Iij = IIJ(axis, lbd, 1)
+    
     
 
-    Sijkl = get_Sijkl(axis, I, Ii, Iij)
+    Sijkl = get_Sijkl(axis, Ii, Iij)
     
     lbd_der = lamb_der(X, axis, lbd)
     lbd_d_der = lamb_der2(X, axis, lbd, lbd_der)
@@ -362,4 +368,3 @@ try:
 
 except Exception as e:
     print("error:", e)
-
