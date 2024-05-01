@@ -47,6 +47,7 @@ appExpress.get('/isohetergen',(req,res)=>{
   res.render('InputPages/isohetergen')
 })
 
+
 appExpress.get('/learnproblem',(req,res)=>{
   res.render('Tuts/problemTut')
 })
@@ -254,7 +255,7 @@ appExpress.post('/isoinhomoinput',validateInput,(req,res)=>{
     console.log(`Python script exited with code ${code}`);
     console.log(error);
     console.log(output);
-    res.render('result.ejs', { output });
+    res.render('result_inhomo.ejs', { output });
   });
 
 })
@@ -276,7 +277,28 @@ appExpress.post('/dummy',(req,res)=>{
 
   pythonProcess.on('close', (code) => {
     console.log(`Python process exited with code ${code}`);
-    res.send('Python function executed successfully');
+    // res.send('Python function executed successfully');
+  });
+});
+
+appExpress.post('/isoinhomoplot',(req,res)=>{
+  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+  console.log(req.body);
+  inputData.plottype = req.body.plot_type;
+  const pythonProcess = spawn('python',['./Solution_codes/3D_iso_inhomo_plot.py',JSON.stringify(inputData)]);
+
+  // Handle Python process events
+  pythonProcess.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+  });
+
+  pythonProcess.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+  });
+
+  pythonProcess.on('close', (code) => {
+    console.log(`Python process exited with code ${code}`);
+    // res.send('Python function executed successfully');
   });
 });
 

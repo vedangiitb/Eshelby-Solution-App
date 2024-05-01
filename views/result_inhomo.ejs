@@ -2,7 +2,7 @@
 
 <h3>Results</h3>
 <% if (output) { %>
-    <form action="\dummy" method="POST" id="plotForm">
+    <form action="/isoinhomoplot" method="POST" id="plotForm">
     <div >
         <pre id="dataDisplay" style="font-family:Verdana, Geneva, Tahoma, sans-serif; font-size: 16px;"><%= output %></pre>
         <div style="display: flex; flex-direction: column; gap: 5px;" class="col-8">
@@ -15,6 +15,9 @@
                     <option value="12" >sigma12</option>
                     <option value="13">sigma13</option>
                     <option value="23" >sigma23</option>
+                    <option value="21" >sigma21</option>
+                    <option value="31" >sigma31</option>
+                    <option value="32" >sigma32</option>
                 </select>
                </div>
             <button id="saveButton" class="btn btn-outline-light">Save Data</button>
